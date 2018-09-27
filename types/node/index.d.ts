@@ -142,6 +142,7 @@ interface Error {
 // Declare "static" methods in Error
 interface ErrorConstructor {
     /** Create .stack property on a target object */
+    // tslint:disable-next-line:ban-types
     captureStackTrace(targetObject: Object, constructorOpt?: Function): void;
 
     /**
@@ -493,6 +494,8 @@ declare namespace NodeJS {
         new(stdout: WritableStream, stderr?: WritableStream): Console;
     }
 
+    type StackIgnoreCTor = Function;
+
     interface CallSite {
         /**
          * Value of "this"
@@ -510,6 +513,7 @@ declare namespace NodeJS {
         /**
          * Current function
          */
+        // tslint:disable-next-line:ban-types
         getFunction(): Function | undefined;
 
         /**
@@ -575,22 +579,24 @@ declare namespace NodeJS {
         stack?: string;
     }
 
+    export type Listener = (...args: any[]) => void;
+
     class EventEmitter {
-        addListener(event: string | symbol, listener: (...args: any[]) => void): this;
-        on(event: string | symbol, listener: (...args: any[]) => void): this;
-        once(event: string | symbol, listener: (...args: any[]) => void): this;
-        removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
-        off(event: string | symbol, listener: (...args: any[]) => void): this;
+        addListener(event: string | symbol, listener: Listener): this;
+        on(event: string | symbol, listener: Listener): this;
+        once(event: string | symbol, listener: Listener): this;
+        removeListener(event: string | symbol, listener: Listener): this;
+        off(event: string | symbol, listener: Listener): this;
         removeAllListeners(event?: string | symbol): this;
         setMaxListeners(n: number): this;
         getMaxListeners(): number;
-        listeners(event: string | symbol): Function[];
-        rawListeners(event: string | symbol): Function[];
+        listeners(event: string | symbol): Listener[];
+        rawListeners(event: string | symbol): Listener[];
         emit(event: string | symbol, ...args: any[]): boolean;
         listenerCount(type: string | symbol): number;
         // Added in Node 6...
-        prependListener(event: string | symbol, listener: (...args: any[]) => void): this;
-        prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): this;
+        prependListener(event: string | symbol, listener: Listener): this;
+        prependOnceListener(event: string | symbol, listener: Listener): this;
         eventNames(): Array<string | symbol>;
     }
 
@@ -609,14 +615,16 @@ declare namespace NodeJS {
         [Symbol.asyncIterator](): AsyncIterableIterator<string | Buffer>;
     }
 
+    type OptionalErrorCallback = (error?: Error | null) => void;
+
     interface WritableStream extends EventEmitter {
         writable: boolean;
-        write(buffer: Buffer | string, cb?: Function): boolean;
-        write(str: string, encoding?: string, cb?: Function): boolean;
-        end(cb?: Function): void;
-        end(buffer: Buffer, cb?: Function): void;
-        end(str: string, cb?: Function): void;
-        end(str: string, encoding?: string, cb?: Function): void;
+        write(buffer: Buffer | string, cb?: OptionalErrorCallback): boolean;
+        write(str: string, encoding?: string, cb?: OptionalErrorCallback): boolean;
+        end(cb?: OptionalErrorCallback): void;
+        end(buffer: Buffer, cb?: OptionalErrorCallback): void;
+        end(str: string, cb?: OptionalErrorCallback): void;
+        end(str: string, encoding?: string, cb?: OptionalErrorCallback): void;
     }
 
     interface ReadWriteStream extends ReadableStream, WritableStream { }
@@ -630,10 +638,10 @@ declare namespace NodeJS {
         bind(cb: (err: Error, data: any) => any): any;
         intercept(cb: (data: any) => any): any;
 
-        addListener(event: string, listener: (...args: any[]) => void): this;
-        on(event: string, listener: (...args: any[]) => void): this;
-        once(event: string, listener: (...args: any[]) => void): this;
-        removeListener(event: string, listener: (...args: any[]) => void): this;
+        addListener(event: string, listener: Listener): this;
+        on(event: string, listener: Listener): this;
+        once(event: string, listener: Listener): this;
+        removeListener(event: string, listener: Listener): this;
         removeAllListeners(event?: string): this;
     }
 
@@ -709,9 +717,9 @@ declare namespace NodeJS {
         readonly writableLength: number;
         columns?: number;
         rows?: number;
-        _write(chunk: any, encoding: string, callback: Function): void;
-        _destroy(err: Error | null, callback: Function): void;
-        _final(callback: Function): void;
+        _write(chunk: any, encoding: string, callback: OptionalErrorCallback): void;
+        _destroy(err: Error | null, callback: OptionalErrorCallback): void;
+        _final(callback: OptionalErrorCallback): void;
         setDefaultEncoding(encoding: string): this;
         cork(): void;
         uncork(): void;
@@ -723,7 +731,7 @@ declare namespace NodeJS {
         isRaw?: boolean;
         setRawMode?(mode: boolean): void;
         _read(size: number): void;
-        _destroy(err: Error | null, callback: Function): void;
+        _destroy(err: Error | null, callback: OptionalErrorCallback): void;
         push(chunk: any, encoding?: string): boolean;
         destroy(error?: Error): void;
     }
@@ -741,7 +749,10 @@ declare namespace NodeJS {
         chdir(directory: string): void;
         cwd(): string;
         debugPort: number;
-        emitWarning(warning: string | Error, name?: string, ctor?: Function): void;
+        /**
+         * Can be used to emit custom or application specific process warnings. These can be listened for by adding a handler to the 'warning' event.
+         */
+        emitWarning(warning: string | Error, name?: string, ctor?: StackIgnoreCTor): void;
         env: ProcessEnv;
         exit(code?: number): never;
         exitCode: number;
@@ -794,7 +805,11 @@ declare namespace NodeJS {
         mainModule?: NodeModule;
         memoryUsage(): MemoryUsage;
         cpuUsage(previousValue?: CpuUsage): CpuUsage;
-        nextTick(callback: Function, ...args: any[]): void;
+        nextTick(callback: () => void): void;
+        nextTick<T1>(callback: (arg1: T1) => void, args: [T1]): void;
+        nextTick<T1, T2>(callback: (arg1: T1, arg2: T2) => void, args: [T1, T2]): void;
+        nextTick<T1, T2, T3>(callback: (arg1: T1, arg2: T2, arg3: T2) => void, args: [T1, T2, T3]): void;
+        nextTick(callback: (...args: any[]) => void, args: any[]): void;
         release: ProcessRelease;
         umask(mask?: number): number;
         uptime(): number;
@@ -937,20 +952,20 @@ declare namespace NodeJS {
         NaN: typeof NaN;
         Number: typeof Number;
         Object: typeof Object;
-        Promise: Function;
+        Promise: typeof Promise;
         RangeError: typeof RangeError;
         ReferenceError: typeof ReferenceError;
         RegExp: typeof RegExp;
         Set: SetConstructor;
         String: typeof String;
-        Symbol: Function;
+        Symbol: typeof Symbol;
         SyntaxError: typeof SyntaxError;
         TypeError: typeof TypeError;
         URIError: typeof URIError;
         Uint16Array: typeof Uint16Array;
         Uint32Array: typeof Uint32Array;
         Uint8Array: typeof Uint8Array;
-        Uint8ClampedArray: Function;
+        Uint8ClampedArray: typeof Uint8ClampedArray;
         WeakMap: WeakMapConstructor;
         WeakSet: WeakSetConstructor;
         clearImmediate: (immediateId: any) => void;
@@ -970,7 +985,7 @@ declare namespace NodeJS {
         parseInt: typeof parseInt;
         process: Process;
         root: Global;
-        setImmediate: (callback: (...args: any[]) => void, ...args: any[]) => any;
+        setImmediate: (callback: (...args: any[]) => void, ...args: any[]) => Timer;
         setInterval: (callback: (...args: any[]) => void, ms: number, ...args: any[]) => Timer;
         setTimeout: (callback: (...args: any[]) => void, ms: number, ...args: any[]) => Timer;
         undefined: typeof undefined;
@@ -1022,12 +1037,12 @@ declare module "buffer" {
 
 declare module "querystring" {
     interface StringifyOptions {
-        encodeURIComponent?: Function;
+        encodeURIComponent?: (str: string) => string;
     }
 
     interface ParseOptions {
         maxKeys?: number;
-        decodeURIComponent?: Function;
+        decodeURIComponent?: (str: string) => string;
     }
 
     interface ParsedUrlQuery { [key: string]: string | string[]; }
@@ -1042,7 +1057,8 @@ declare module "events" {
     class internal extends NodeJS.EventEmitter { }
 
     namespace internal {
-         class EventEmitter extends internal {
+        type Listener = NodeJS.Listener;
+        class EventEmitter extends internal {
             /** @deprecated since v4.0.0 */
             static listenerCount(emitter: EventEmitter, event: string | symbol): number;
             static defaultMaxListeners: number;
@@ -1057,8 +1073,8 @@ declare module "events" {
             removeAllListeners(event?: string | symbol): this;
             setMaxListeners(n: number): this;
             getMaxListeners(): number;
-            listeners(event: string | symbol): Function[];
-            rawListeners(event: string | symbol): Function[];
+            listeners(event: string | symbol): Listener[];
+            rawListeners(event: string | symbol): Listener[];
             emit(event: string | symbol, ...args: any[]): boolean;
             eventNames(): Array<string | symbol>;
             listenerCount(type: string | symbol): number;
@@ -1400,7 +1416,7 @@ declare module "cluster" {
 
     interface Cluster extends events.EventEmitter {
         Worker: Worker;
-        disconnect(callback?: Function): void;
+        disconnect(callback?: () => void): void;
         fork(env?: any): Worker;
         isMaster: boolean;
         isWorker: boolean;
@@ -1478,7 +1494,7 @@ declare module "cluster" {
         prependOnceListener(event: "setup", listener: (settings: any) => void): this;
     }
 
-    function disconnect(callback?: Function): void;
+    function disconnect(callback?: () => void): void;
     function fork(env?: any): Worker;
     const isMaster: boolean;
     const isWorker: boolean;
@@ -1541,7 +1557,7 @@ declare module "cluster" {
     function removeAllListeners(event?: string): Cluster;
     function setMaxListeners(n: number): Cluster;
     function getMaxListeners(): number;
-    function listeners(event: string): Function[];
+    function listeners(event: string): NodeJS.Listener[];
     function listenerCount(type: string): number;
 
     function prependListener(event: string, listener: (...args: any[]) => void): Cluster;
@@ -1963,18 +1979,20 @@ declare module "repl" {
         useColors?: boolean;
         useGlobal?: boolean;
         ignoreUndefined?: boolean;
-        writer?: Function;
-        completer?: Function;
+        writer?: (output: string) => string;
+        completer?: (line: string) => string[];
         replMode?: any;
         breakEvalOnSigint?: any;
     }
+
+    type ReplCommand = (arg: string) => void;
 
     interface REPLServer extends readline.ReadLine {
         context: any;
         inputStream: NodeJS.ReadableStream;
         outputStream: NodeJS.WritableStream;
 
-        defineCommand(keyword: string, cmd: Function | { help: string, action: Function }): void;
+        defineCommand(keyword: string, cmd: ReplCommand | { help: string, action: ReplCommand }): void;
         displayPrompt(preserveCursor?: boolean): void;
 
         /**
@@ -2975,21 +2993,21 @@ declare module "net" {
 
         // Extended base methods
         write(buffer: Buffer): boolean;
-        write(buffer: Buffer, cb?: Function): boolean;
-        write(str: string, cb?: Function): boolean;
-        write(str: string, encoding?: string, cb?: Function): boolean;
+        write(buffer: Buffer, cb?: NodeJS.OptionalErrorCallback): boolean;
+        write(str: string, cb?: NodeJS.OptionalErrorCallback): boolean;
+        write(str: string, encoding?: string, cb?: NodeJS.OptionalErrorCallback): boolean;
         write(str: string, encoding?: string, fd?: string): boolean;
-        write(data: any, encoding?: string, callback?: Function): void;
+        write(data: any, encoding?: string, callback?: NodeJS.OptionalErrorCallback): void;
 
-        connect(options: SocketConnectOpts, connectionListener?: Function): this;
-        connect(port: number, host: string, connectionListener?: Function): this;
-        connect(port: number, connectionListener?: Function): this;
-        connect(path: string, connectionListener?: Function): this;
+        connect(options: SocketConnectOpts, connectionListener?: () => void): this;
+        connect(port: number, host: string, connectionListener?: () => void): this;
+        connect(port: number, connectionListener?: () => void): this;
+        connect(path: string, connectionListener?: () => void): this;
 
         setEncoding(encoding?: string): this;
         pause(): this;
         resume(): this;
-        setTimeout(timeout: number, callback?: Function): this;
+        setTimeout(timeout: number, callback?: () => void): this;
         setNoDelay(noDelay?: boolean): this;
         setKeepAlive(enable?: boolean, initialDelay?: number): this;
         address(): AddressInfo | string;
@@ -3009,9 +3027,9 @@ declare module "net" {
 
         // Extended base methods
         end(): void;
-        end(buffer: Buffer, cb?: Function): void;
-        end(str: string, cb?: Function): void;
-        end(str: string, encoding?: string, cb?: Function): void;
+        end(buffer: Buffer, cb?: NodeJS.OptionalErrorCallback): void;
+        end(str: string, cb?: NodeJS.OptionalErrorCallback): void;
+        end(str: string, encoding?: string, cb?: NodeJS.OptionalErrorCallback): void;
         end(data?: any, encoding?: string): void;
 
         /**
@@ -3101,16 +3119,16 @@ declare module "net" {
         constructor(connectionListener?: (socket: Socket) => void);
         constructor(options?: { allowHalfOpen?: boolean, pauseOnConnect?: boolean }, connectionListener?: (socket: Socket) => void);
 
-        listen(port?: number, hostname?: string, backlog?: number, listeningListener?: Function): this;
-        listen(port?: number, hostname?: string, listeningListener?: Function): this;
-        listen(port?: number, backlog?: number, listeningListener?: Function): this;
-        listen(port?: number, listeningListener?: Function): this;
-        listen(path: string, backlog?: number, listeningListener?: Function): this;
-        listen(path: string, listeningListener?: Function): this;
-        listen(options: ListenOptions, listeningListener?: Function): this;
-        listen(handle: any, backlog?: number, listeningListener?: Function): this;
-        listen(handle: any, listeningListener?: Function): this;
-        close(callback?: Function): this;
+        listen(port?: number, hostname?: string, backlog?: number, listeningListener?: () => void): this;
+        listen(port?: number, hostname?: string, listeningListener?: () => void): this;
+        listen(port?: number, backlog?: number, listeningListener?: () => void): this;
+        listen(port?: number, listeningListener?: () => void): this;
+        listen(path: string, backlog?: number, listeningListener?: () => void): this;
+        listen(path: string, listeningListener?: () => void): this;
+        listen(options: ListenOptions, listeningListener?: () => void): this;
+        listen(handle: any, backlog?: number, listeningListener?: () => void): this;
+        listen(handle: any, listeningListener?: () => void): this;
+        close(callback?: (isException: boolean) => void): this;
         address(): AddressInfo | string;
         getConnections(cb: (error: Error | null, count: number) => void): void;
         ref(): this;
@@ -3175,12 +3193,12 @@ declare module "net" {
 
     function createServer(connectionListener?: (socket: Socket) => void): Server;
     function createServer(options?: { allowHalfOpen?: boolean, pauseOnConnect?: boolean }, connectionListener?: (socket: Socket) => void): Server;
-    function connect(options: NetConnectOpts, connectionListener?: Function): Socket;
-    function connect(port: number, host?: string, connectionListener?: Function): Socket;
-    function connect(path: string, connectionListener?: Function): Socket;
-    function createConnection(options: NetConnectOpts, connectionListener?: Function): Socket;
-    function createConnection(port: number, host?: string, connectionListener?: Function): Socket;
-    function createConnection(path: string, connectionListener?: Function): Socket;
+    function connect(options: NetConnectOpts, connectionListener?: () => void): Socket;
+    function connect(port: number, host?: string, connectionListener?: () => void): Socket;
+    function connect(path: string, connectionListener?: () => void): Socket;
+    function createConnection(options: NetConnectOpts, connectionListener?: () => void): Socket;
+    function createConnection(port: number, host?: string, connectionListener?: () => void): Socket;
+    function createConnection(path: string, connectionListener?: () => void): Socket;
     function isIP(input: string): number;
     function isIPv4(input: string): boolean;
     function isIPv6(input: string): boolean;
@@ -3222,7 +3240,7 @@ declare module "dgram" {
         bind(port?: number, address?: string, callback?: () => void): void;
         bind(port?: number, callback?: () => void): void;
         bind(callback?: () => void): void;
-        bind(options: BindOptions, callback?: Function): void;
+        bind(options: BindOptions, callback?: () => void): void;
         close(callback?: () => void): void;
         address(): AddressInfo | string;
         setBroadcast(flag: boolean): void;
@@ -5972,6 +5990,8 @@ declare module "tls" {
         lookup?: net.LookupFunction;
     }
 
+    type OCSPRequestCallback = (cert: any, issuer: any, onOCSP: (error: Error | null | undefined, response: any) => void) => void;
+
     class Server extends net.Server {
         addContext(hostName: string, credentials: {
             key: string;
@@ -5990,42 +6010,42 @@ declare module "tls" {
         addListener(event: string, listener: (...args: any[]) => void): this;
         addListener(event: "tlsClientError", listener: (err: Error, tlsSocket: TLSSocket) => void): this;
         addListener(event: "newSession", listener: (sessionId: any, sessionData: any, callback: (err: Error, resp: Buffer) => void) => void): this;
-        addListener(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: Function) => void): this;
+        addListener(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: OCSPRequestCallback) => void): this;
         addListener(event: "resumeSession", listener: (sessionId: any, callback: (err: Error, sessionData: any) => void) => void): this;
         addListener(event: "secureConnection", listener: (tlsSocket: TLSSocket) => void): this;
 
         emit(event: string | symbol, ...args: any[]): boolean;
         emit(event: "tlsClientError", err: Error, tlsSocket: TLSSocket): boolean;
         emit(event: "newSession", sessionId: any, sessionData: any, callback: (err: Error, resp: Buffer) => void): boolean;
-        emit(event: "OCSPRequest", certificate: Buffer, issuer: Buffer, callback: Function): boolean;
+        emit(event: "OCSPRequest", certificate: Buffer, issuer: Buffer, callback: OCSPRequestCallback): boolean;
         emit(event: "resumeSession", sessionId: any, callback: (err: Error, sessionData: any) => void): boolean;
         emit(event: "secureConnection", tlsSocket: TLSSocket): boolean;
 
         on(event: string, listener: (...args: any[]) => void): this;
         on(event: "tlsClientError", listener: (err: Error, tlsSocket: TLSSocket) => void): this;
         on(event: "newSession", listener: (sessionId: any, sessionData: any, callback: (err: Error, resp: Buffer) => void) => void): this;
-        on(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: Function) => void): this;
+        on(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: OCSPRequestCallback) => void): this;
         on(event: "resumeSession", listener: (sessionId: any, callback: (err: Error, sessionData: any) => void) => void): this;
         on(event: "secureConnection", listener: (tlsSocket: TLSSocket) => void): this;
 
         once(event: string, listener: (...args: any[]) => void): this;
         once(event: "tlsClientError", listener: (err: Error, tlsSocket: TLSSocket) => void): this;
         once(event: "newSession", listener: (sessionId: any, sessionData: any, callback: (err: Error, resp: Buffer) => void) => void): this;
-        once(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: Function) => void): this;
+        once(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: OCSPRequestCallback) => void): this;
         once(event: "resumeSession", listener: (sessionId: any, callback: (err: Error, sessionData: any) => void) => void): this;
         once(event: "secureConnection", listener: (tlsSocket: TLSSocket) => void): this;
 
         prependListener(event: string, listener: (...args: any[]) => void): this;
         prependListener(event: "tlsClientError", listener: (err: Error, tlsSocket: TLSSocket) => void): this;
         prependListener(event: "newSession", listener: (sessionId: any, sessionData: any, callback: (err: Error, resp: Buffer) => void) => void): this;
-        prependListener(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: Function) => void): this;
+        prependListener(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: OCSPRequestCallback) => void): this;
         prependListener(event: "resumeSession", listener: (sessionId: any, callback: (err: Error, sessionData: any) => void) => void): this;
         prependListener(event: "secureConnection", listener: (tlsSocket: TLSSocket) => void): this;
 
         prependOnceListener(event: string, listener: (...args: any[]) => void): this;
         prependOnceListener(event: "tlsClientError", listener: (err: Error, tlsSocket: TLSSocket) => void): this;
         prependOnceListener(event: "newSession", listener: (sessionId: any, sessionData: any, callback: (err: Error, resp: Buffer) => void) => void): this;
-        prependOnceListener(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: Function) => void): this;
+        prependOnceListener(event: "OCSPRequest", listener: (certificate: Buffer, issuer: Buffer, callback: OCSPRequestCallback) => void): this;
         prependOnceListener(event: "resumeSession", listener: (sessionId: any, callback: (err: Error, sessionData: any) => void) => void): this;
         prependOnceListener(event: "secureConnection", listener: (tlsSocket: TLSSocket) => void): this;
     }
@@ -6035,9 +6055,19 @@ declare module "tls" {
         cleartext: any;
     }
 
+    interface KeyOptions {
+        pem: string | Buffer;
+        passphrase?: string;
+    }
+
+    interface PFXOptions {
+        buf: string | Buffer;
+        passphrase?: string;
+    }
+
     interface SecureContextOptions {
-        pfx?: string | Buffer | Array<string | Buffer | Object>;
-        key?: string | Buffer | Array<Buffer | Object>;
+        pfx?: string | Buffer | Array<string | Buffer | PFXOptions>;
+        key?: string | Buffer | Array<Buffer | KeyOptions>;
         passphrase?: string;
         cert?: string | Buffer | Array<string | Buffer>;
         ca?: string | Buffer | Array<string | Buffer>;
@@ -6213,11 +6243,18 @@ declare module "crypto" {
         sign(private_key: string | { key: string; passphrase: string, padding?: number, saltLength?: number }, output_format: HexBase64Latin1Encoding): string;
     }
     function createVerify(algorith: string, options?: stream.WritableOptions): Verify;
+
+    interface VerifyOptions {
+        key: string;
+        padding?: number;
+        saltLength?: number;
+    }
+
     interface Verify extends NodeJS.WritableStream {
         update(data: string | Buffer | NodeJS.TypedArray | DataView): Verify;
         update(data: string, input_encoding: Utf8AsciiLatin1Encoding): Verify;
-        verify(object: string | Object, signature: Buffer | NodeJS.TypedArray | DataView): boolean;
-        verify(object: string | Object, signature: string, signature_format: HexBase64Latin1Encoding): boolean;
+        verify(object: string | VerifyOptions, signature: Buffer | NodeJS.TypedArray | DataView): boolean;
+        verify(object: string | VerifyOptions, signature: string, signature_format: HexBase64Latin1Encoding): boolean;
         // https://nodejs.org/api/crypto.html#crypto_verifier_verify_object_signature_signature_format
         // The signature field accepts a TypedArray type, but it is only available starting ES2017
     }
@@ -6432,10 +6469,10 @@ declare module "stream" {
             highWaterMark?: number;
             decodeStrings?: boolean;
             objectMode?: boolean;
-            write?(this: Writable, chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
-            writev?(this: Writable, chunks: Array<{ chunk: any, encoding: string }>, callback: (error?: Error | null) => void): void;
+            write?(this: Writable, chunk: any, encoding: string, callback: NodeJS.OptionalErrorCallback): void;
+            writev?(this: Writable, chunks: Array<{ chunk: any, encoding: string }>, callback: NodeJS.OptionalErrorCallback): void;
             destroy?(this: Writable, error: Error | null, callback: (error: Error | null) => void): void;
-            final?(this: Writable, callback: (error?: Error | null) => void): void;
+            final?(this: Writable, callback: NodeJS.OptionalErrorCallback): void;
         }
 
         class Writable extends Stream implements NodeJS.WritableStream {
@@ -6443,10 +6480,10 @@ declare module "stream" {
             readonly writableHighWaterMark: number;
             readonly writableLength: number;
             constructor(opts?: WritableOptions);
-            _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
-            _writev?(chunks: Array<{ chunk: any, encoding: string }>, callback: (error?: Error | null) => void): void;
+            _write(chunk: any, encoding: string, callback: NodeJS.OptionalErrorCallback): void;
+            _writev?(chunks: Array<{ chunk: any, encoding: string }>, callback: NodeJS.OptionalErrorCallback): void;
             _destroy(error: Error | null, callback: (error: Error | null) => void): void;
-            _final(callback: (error?: Error | null) => void): void;
+            _final(callback: NodeJS.OptionalErrorCallback): void;
             write(chunk: any, cb?: (error: Error | null | undefined) => void): boolean;
             write(chunk: any, encoding?: string, cb?: (error: Error | null | undefined) => void): boolean;
             setDefaultEncoding(encoding: string): this;
@@ -6529,9 +6566,9 @@ declare module "stream" {
             readableObjectMode?: boolean;
             writableObjectMode?: boolean;
             read?(this: Duplex, size: number): void;
-            write?(this: Duplex, chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
-            writev?(this: Duplex, chunks: Array<{ chunk: any, encoding: string }>, callback: (error?: Error | null) => void): void;
-            final?(this: Duplex, callback: (error?: Error | null) => void): void;
+            write?(this: Duplex, chunk: any, encoding: string, callback: NodeJS.OptionalErrorCallback): void;
+            writev?(this: Duplex, chunks: Array<{ chunk: any, encoding: string }>, callback: NodeJS.OptionalErrorCallback): void;
+            final?(this: Duplex, callback: NodeJS.OptionalErrorCallback): void;
             destroy?(this: Duplex, error: Error | null, callback: (error: Error | null) => void): void;
         }
 
@@ -6541,12 +6578,12 @@ declare module "stream" {
             readonly writableHighWaterMark: number;
             readonly writableLength: number;
             constructor(opts?: DuplexOptions);
-            _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
-            _writev?(chunks: Array<{ chunk: any, encoding: string }>, callback: (error?: Error | null) => void): void;
-            _destroy(error: Error | null, callback: (error: Error | null) => void): void;
-            _final(callback: (error?: Error | null) => void): void;
-            write(chunk: any, cb?: (error: Error | null | undefined) => void): boolean;
-            write(chunk: any, encoding?: string, cb?: (error: Error | null | undefined) => void): boolean;
+            _write(chunk: any, encoding: string, callback: NodeJS.OptionalErrorCallback): void;
+            _writev?(chunks: Array<{ chunk: any, encoding: string }>, callback: NodeJS.OptionalErrorCallback): void;
+            _destroy(error: Error | null, callback: NodeJS.OptionalErrorCallback): void;
+            _final(callback: NodeJS.OptionalErrorCallback): void;
+            write(chunk: any, cb?: NodeJS.OptionalErrorCallback): boolean;
+            write(chunk: any, encoding?: string, cb?: NodeJS.OptionalErrorCallback): boolean;
             setDefaultEncoding(encoding: string): this;
             end(cb?: () => void): void;
             end(chunk: any, cb?: () => void): void;
@@ -6559,9 +6596,9 @@ declare module "stream" {
 
         interface TransformOptions extends DuplexOptions {
             read?(this: Transform, size: number): void;
-            write?(this: Transform, chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
-            writev?(this: Transform, chunks: Array<{ chunk: any, encoding: string }>, callback: (error?: Error | null) => void): void;
-            final?(this: Transform, callback: (error?: Error | null) => void): void;
+            write?(this: Transform, chunk: any, encoding: string, callback: NodeJS.OptionalErrorCallback): void;
+            writev?(this: Transform, chunks: Array<{ chunk: any, encoding: string }>, callback: NodeJS.OptionalErrorCallback): void;
+            final?(this: Transform, callback: NodeJS.OptionalErrorCallback): void;
             destroy?(this: Transform, error: Error | null, callback: (error: Error | null) => void): void;
             transform?(this: Transform, chunk: any, encoding: string, callback: TransformCallback): void;
             flush?(this: Transform, callback: TransformCallback): void;
@@ -6716,6 +6753,7 @@ declare module "util" {
         fn: (arg1: T1, arg2: T2, arg3: T3, arg4: T4, arg5: T5, arg6: T6) => Promise<TResult>
     ): (arg1: T1, arg2: T2, arg3: T3, arg4: T4, arg5: T5, arg6: T6, callback: (err: NodeJS.ErrnoException, result: TResult) => void) => void;
 
+    // tslint:disable-next-line:ban-types
     function promisify<TCustom extends Function>(fn: CustomPromisify<TCustom>): TCustom;
     function promisify<TResult>(fn: (callback: (err: Error | null, result: TResult) => void) => void): () => Promise<TResult>;
     function promisify(fn: (callback: (err?: Error | null) => void) => void): () => Promise<void>;
@@ -6735,6 +6773,7 @@ declare module "util" {
     function promisify<T1, T2, T3, T4, T5>(
         fn: (arg1: T1, arg2: T2, arg3: T3, arg4: T4, arg5: T5, callback: (err?: Error | null) => void) => void,
     ): (arg1: T1, arg2: T2, arg3: T3, arg4: T4, arg5: T5) => Promise<void>;
+    // tslint:disable-next-line:ban-types
     function promisify(fn: Function): Function;
     namespace promisify {
         const custom: symbol;
@@ -6745,7 +6784,9 @@ declare module "util" {
         function isArgumentsObject(object: any): object is IArguments;
         function isArrayBuffer(object: any): object is ArrayBuffer;
         function isAsyncFunction(object: any): boolean;
+        // tslint:disable-next-line:ban-types
         function isBooleanObject(object: any): object is Boolean;
+        // tslint:disable-next-line:ban-types
         function isBoxedPrimitive(object: any): object is (Number | Boolean | String | Symbol /* BigInt */);
         function isDataView(object: any): object is DataView;
         function isDate(object: any): object is Date;
@@ -6760,6 +6801,7 @@ declare module "util" {
         function isMap(object: any): boolean;
         function isMapIterator(object: any): boolean;
         function isNativeError(object: any): object is Error;
+        // tslint:disable-next-line:ban-types
         function isNumberObject(object: any): object is Number;
         function isPromise(object: any): boolean;
         function isProxy(object: any): boolean;
@@ -6814,13 +6856,15 @@ declare module "assert" {
 
             constructor(options?: {
                 message?: string; actual?: any; expected?: any;
-                operator?: string; stackStartFn?: Function
+                operator?: string; stackStartFn?: NodeJS.StackIgnoreCTor
             });
         }
 
+        type ErrorAssertion = (error: Error) => boolean;
+
         function fail(message?: string | Error): never;
         /** @deprecated since v10.0.0 - use fail([message]) or other assert functions instead. */
-        function fail(actual: any, expected: any, message?: string | Error, operator?: string, stackStartFn?: Function): never;
+        function fail(actual: any, expected: any, message?: string | Error, operator?: string, stackStartFn?: NodeJS.StackIgnoreCTor): never;
         function ok(value: any, message?: string | Error): void;
         /** @deprecated since v9.9.0 - use strictEqual() instead. */
         function equal(actual: any, expected: any, message?: string | Error): void;
@@ -6836,16 +6880,16 @@ declare module "assert" {
         function notDeepStrictEqual(actual: any, expected: any, message?: string | Error): void;
 
         function throws(block: Function, message?: string | Error): void;
-        function throws(block: Function, error: RegExp | Function | Object | Error, message?: string | Error): void;
+        function throws(block: Function, error: RegExp | ErrorAssertion | Object | Error, message?: string | Error): void;
         function doesNotThrow(block: Function, message?: string | Error): void;
-        function doesNotThrow(block: Function, error: RegExp | Function, message?: string | Error): void;
+        function doesNotThrow(block: Function, error: RegExp | ErrorAssertion, message?: string | Error): void;
 
         function ifError(value: any): void;
 
         function rejects(block: Function | Promise<any>, message?: string | Error): Promise<void>;
-        function rejects(block: Function | Promise<any>, error: RegExp | Function | Object | Error, message?: string | Error): Promise<void>;
+        function rejects(block: Function | Promise<any>, error: RegExp | ErrorAssertion | Object | Error, message?: string | Error): Promise<void>;
         function doesNotReject(block: Function | Promise<any>, message?: string | Error): Promise<void>;
-        function doesNotReject(block: Function | Promise<any>, error: RegExp | Function, message?: string | Error): Promise<void>;
+        function doesNotReject(block: Function | Promise<any>, error: RegExp | ErrorAssertion, message?: string | Error): Promise<void>;
 
         const strict: typeof internal;
     }
