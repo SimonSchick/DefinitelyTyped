@@ -1,0 +1,286 @@
+import * as childProcess from 'child_process';
+import * as util from 'util';
+import * as net from 'net';
+import * as stream from 'stream';
+import * as fs from 'fs';
+import * as assert from 'assert';
+
+{
+    childProcess.exec("echo test");
+    childProcess.exec("echo test", { windowsHide: true });
+    childProcess.spawn("echo", ["test"], { windowsHide: true });
+    childProcess.spawn("echo", ["test"], { windowsHide: true, argv0: "echo-test" });
+    childProcess.spawn("echo", ["test"], { stdio: [0xdeadbeef, "inherit", undefined, "pipe"] });
+    childProcess.spawnSync("echo test");
+    childProcess.spawnSync("echo test", {windowsVerbatimArguments: false});
+    childProcess.spawnSync("echo test", {windowsVerbatimArguments: false, argv0: "echo-test"});
+    childProcess.spawnSync("echo test", {input: new Uint8Array([])});
+    childProcess.spawnSync("echo test", {input: new DataView(new ArrayBuffer(1))});
+}
+
+{
+    childProcess.execFile("npm", () => {});
+    childProcess.execFile("npm", { windowsHide: true }, () => {});
+    childProcess.execFile("npm", ["-v"], () => {});
+    childProcess.execFile("npm", ["-v"], { windowsHide: true, encoding: 'utf-8' }, (stdout, stderr) => { assert(stdout instanceof String); });
+    childProcess.execFile("npm", ["-v"], { windowsHide: true, encoding: 'buffer' }, (stdout, stderr) => { assert(stdout instanceof Buffer); });
+    childProcess.execFile("npm", { encoding: 'utf-8' }, (stdout, stderr) => { assert(stdout instanceof String); });
+    childProcess.execFile("npm", { encoding: 'buffer' }, (stdout, stderr) => { assert(stdout instanceof Buffer); });
+}
+
+{
+    childProcess.execFileSync("echo test", {input: new Uint8Array([])});
+    childProcess.execFileSync("echo test", {input: new DataView(new ArrayBuffer(1))});
+}
+
+async function testPromisify() {
+    const execFile = util.promisify(childProcess.execFile);
+    let r: { stdout: string | Buffer, stderr: string | Buffer } = await execFile("npm");
+    r = await execFile("npm", ["-v"]);
+    r = await execFile("npm", ["-v"], { encoding: 'utf-8' });
+    r = await execFile("npm", ["-v"], { encoding: 'buffer' });
+    r = await execFile("npm", { encoding: 'utf-8' });
+    r = await execFile("npm", { encoding: 'buffer' });
+}
+
+{
+    let _cp: childProcess.ChildProcess;
+    const _socket: net.Socket = net.createConnection(1);
+    const _server: net.Server = net.createServer();
+    let _boolean: boolean;
+
+    _boolean = _cp.send(1);
+    _boolean = _cp.send('one');
+    _boolean = _cp.send({
+        type: 'test'
+    });
+
+    _boolean = _cp.send(1, (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send('one', (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send({
+        type: 'test'
+    }, (error) => {
+        const _err: Error = error;
+    });
+
+    _boolean = _cp.send(1, _socket);
+    _boolean = _cp.send('one', _socket);
+    _boolean = _cp.send({
+        type: 'test'
+    }, _socket);
+
+    _boolean = _cp.send(1, _socket, (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send('one', _socket, (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send({
+        type: 'test'
+    }, _socket, (error) => {
+        const _err: Error = error;
+    });
+
+    _boolean = _cp.send(1, _socket, {
+        keepOpen: true
+    });
+    _boolean = _cp.send('one', _socket, {
+        keepOpen: true
+    });
+    _boolean = _cp.send({
+        type: 'test'
+    }, _socket, {
+            keepOpen: true
+        });
+
+    _boolean = _cp.send(1, _socket, {
+        keepOpen: true
+    }, (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send('one', _socket, {
+        keepOpen: true
+    }, (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send({
+        type: 'test'
+    }, _socket, {
+            keepOpen: true
+        }, (error) => {
+            const _err: Error = error;
+        });
+
+    _boolean = _cp.send(1, _server);
+    _boolean = _cp.send('one', _server);
+    _boolean = _cp.send({
+        type: 'test'
+    }, _server);
+
+    _boolean = _cp.send(1, _server, (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send('one', _server, (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send({
+        type: 'test'
+    }, _server, (error) => {
+        const _err: Error = error;
+    });
+
+    _boolean = _cp.send(1, _server, {
+        keepOpen: true
+    });
+    _boolean = _cp.send('one', _server, {
+        keepOpen: true
+    });
+    _boolean = _cp.send({
+        type: 'test'
+    }, _server, {
+            keepOpen: true
+        });
+
+    _boolean = _cp.send(1, _server, {
+        keepOpen: true
+    }, (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send('one', _server, {
+        keepOpen: true
+    }, (error) => {
+        const _err: Error = error;
+    });
+    _boolean = _cp.send({
+        type: 'test'
+    }, _server, {
+            keepOpen: true
+        }, (error) => {
+            const _err: Error = error;
+        });
+
+    _cp = _cp.addListener("close", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.addListener("disconnect", () => { });
+    _cp = _cp.addListener("error", (err) => {
+        const _err: Error = err;
+    });
+    _cp = _cp.addListener("exit", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.addListener("message", (message, sendHandle) => {
+        const _message: any = message;
+        const _sendHandle: net.Socket | net.Server = sendHandle;
+    });
+
+    _boolean = _cp.emit("close", () => { });
+    _boolean = _cp.emit("disconnect", () => { });
+    _boolean = _cp.emit("error", () => { });
+    _boolean = _cp.emit("exit", () => { });
+    _boolean = _cp.emit("message", () => { });
+
+    _cp = _cp.on("close", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.on("disconnect", () => { });
+    _cp = _cp.on("error", (err) => {
+        const _err: Error = err;
+    });
+    _cp = _cp.on("exit", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.on("message", (message, sendHandle) => {
+        const _message: any = message;
+        const _sendHandle: net.Socket | net.Server = sendHandle;
+    });
+
+    _cp = _cp.once("close", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.once("disconnect", () => { });
+    _cp = _cp.once("error", (err) => {
+        const _err: Error = err;
+    });
+    _cp = _cp.once("exit", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.once("message", (message, sendHandle) => {
+        const _message: any = message;
+        const _sendHandle: net.Socket | net.Server = sendHandle;
+    });
+
+    _cp = _cp.prependListener("close", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.prependListener("disconnect", () => { });
+    _cp = _cp.prependListener("error", (err) => {
+        const _err: Error = err;
+    });
+    _cp = _cp.prependListener("exit", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.prependListener("message", (message, sendHandle) => {
+        const _message: any = message;
+        const _sendHandle: net.Socket | net.Server = sendHandle;
+    });
+
+    _cp = _cp.prependOnceListener("close", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.prependOnceListener("disconnect", () => { });
+    _cp = _cp.prependOnceListener("error", (err) => {
+        const _err: Error = err;
+    });
+    _cp = _cp.prependOnceListener("exit", (code, signal) => {
+        const _code: number = code;
+        const _signal: string = signal;
+    });
+    _cp = _cp.prependOnceListener("message", (message, sendHandle) => {
+        const _message: any = message;
+        const _sendHandle: net.Socket | net.Server = sendHandle;
+    });
+}
+{
+    process.stdin.setEncoding('utf8');
+
+    process.stdin.on('readable', () => {
+        const chunk = process.stdin.read();
+        if (chunk !== null) {
+          process.stdout.write(`data: ${chunk}`);
+        }
+    });
+
+    process.stdin.on('end', () => {
+        process.stdout.write('end');
+    });
+
+    process.stdin.pipe(process.stdout);
+
+    console.log(process.stdin.isTTY);
+    console.log(process.stdout.isTTY);
+
+    console.log(process.stdin instanceof net.Socket);
+    console.log(process.stdout instanceof fs.ReadStream);
+
+    const stdin: stream.ReadableStream = process.stdin;
+    console.log(stdin instanceof net.Socket);
+    console.log(stdin instanceof fs.ReadStream);
+
+    const stdout: stream.WritableStream = process.stdout;
+    console.log(stdout instanceof net.Socket);
+    console.log(stdout instanceof fs.WriteStream);
+}

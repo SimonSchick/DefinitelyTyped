@@ -1,23 +1,28 @@
 {
-    "include": [
+    "files": [
         "index.d.ts",
-        "types/**/*.d.ts",
-        "tests/**/*.ts"
+        "inspector.d.ts",
+        "node-tests.ts"
     ],
     "compilerOptions": {
         "module": "commonjs",
-        "target": "es2018",
+        "target": "es6",
         "lib": [
-            "es2018"
+            "es6"
         ],
         "noImplicitAny": true,
         "noImplicitThis": true,
         "strictNullChecks": false,
         "strictFunctionTypes": true,
-        "baseUrl": "../",
+        "baseUrl": "../../",
         "typeRoots": [
-            "../"
+            "../../"
         ],
+        "paths": {
+            "node": [
+                "node/v10"
+            ]
+        },
         "types": [],
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
