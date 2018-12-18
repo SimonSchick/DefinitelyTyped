@@ -1,4 +1,4 @@
-// Type definitions for Node.js 11.4
+// Type definitions for Node.js 10.12
 // Project: http://nodejs.org/
 // Definitions by: Microsoft TypeScript <https://github.com/Microsoft>
 //                 DefinitelyTyped <https://github.com/DefinitelyTyped>
@@ -177,9 +177,7 @@ interface Iterator<T> {
     next(value?: any): IteratorResult<T>;
 }
 interface IteratorResult<T> { }
-interface AsyncIterableIterator<T> {
-    next(value?: any): Promise<IteratorResult<T>>;
-}
+interface AsyncIterableIterator<T> {}
 interface SymbolConstructor {
     readonly observable: symbol;
     readonly iterator: symbol;
@@ -225,8 +223,6 @@ declare namespace setImmediate {
     function __promisify__<T>(value: T): Promise<T>;
 }
 declare function clearImmediate(immediateId: NodeJS.Immediate): void;
-
-declare function queueMicrotask(callback: () => void): void;
 
 // TODO: change to `type NodeRequireFunction = (id: string) => any;` in next mayor version.
 interface NodeRequireFunction {
@@ -1210,11 +1206,6 @@ declare module "http" {
         maxHeadersCount: number;
         timeout: number;
         keepAliveTimeout: number;
-        /**
-         * Timeouts for headers to be received.
-         * @default 40000
-         */
-        headersTimeout: number;
     }
 
     // https://github.com/nodejs/node/blob/master/lib/_http_outgoing.js
@@ -1625,131 +1616,6 @@ declare module "cluster" {
     function prependOnceListener(event: "setup", listener: (settings: any) => void): Cluster;
 
     function eventNames(): string[];
-}
-
-declare module "worker_threads" {
-    import { EventEmitter } from "events";
-    import { Readable, Writable } from "stream";
-
-    const isMainThread: boolean;
-    const parentPort: null | MessagePort;
-    const threadId: number;
-    const workerData: any;
-
-    class MessageChannel {
-        readonly port1: MessagePort;
-        readonly port2: MessagePort;
-    }
-
-    class MessagePort extends EventEmitter {
-        close(): void;
-        postMessage(value: any, transferList?: Array<ArrayBuffer | MessagePort>): void;
-        ref(): void;
-        unref(): void;
-        start(): void;
-
-        addListener(event: "close", listener: () => void): this;
-        addListener(event: "message", listener: (value: any) => void): this;
-        addListener(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        emit(event: "close"): boolean;
-        emit(event: "message", value: any): boolean;
-        emit(event: string | symbol, ...args: any[]): boolean;
-
-        on(event: "close", listener: () => void): this;
-        on(event: "message", listener: (value: any) => void): this;
-        on(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        once(event: "close", listener: () => void): this;
-        once(event: "message", listener: (value: any) => void): this;
-        once(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        prependListener(event: "close", listener: () => void): this;
-        prependListener(event: "message", listener: (value: any) => void): this;
-        prependListener(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        prependOnceListener(event: "close", listener: () => void): this;
-        prependOnceListener(event: "message", listener: (value: any) => void): this;
-        prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        removeListener(event: "close", listener: () => void): this;
-        removeListener(event: "message", listener: (value: any) => void): this;
-        removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        off(event: "close", listener: () => void): this;
-        off(event: "message", listener: (value: any) => void): this;
-        off(event: string | symbol, listener: (...args: any[]) => void): this;
-    }
-
-    interface WorkerOptions {
-        eval?: boolean;
-        workerData?: any;
-        stdin?: boolean;
-        stdout?: boolean;
-        stderr?: boolean;
-    }
-
-    class Worker extends EventEmitter {
-        readonly stdin: Writable | null;
-        readonly stdout: Readable;
-        readonly stderr: Readable;
-        readonly threadId: number;
-
-        constructor(filename: string, options?: WorkerOptions);
-
-        postMessage(value: any, transferList?: Array<ArrayBuffer | MessagePort>): void;
-        ref(): void;
-        unref(): void;
-        terminate(callback?: (err: any, exitCode: number) => void): void;
-
-        addListener(event: "error", listener: (err: any) => void): this;
-        addListener(event: "exit", listener: (exitCode: number) => void): this;
-        addListener(event: "message", listener: (value: any) => void): this;
-        addListener(event: "online", listener: () => void): this;
-        addListener(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        emit(event: "error", err: any): boolean;
-        emit(event: "exit", exitCode: number): boolean;
-        emit(event: "message", value: any): boolean;
-        emit(event: "online"): boolean;
-        emit(event: string | symbol, ...args: any[]): boolean;
-
-        on(event: "error", listener: (err: any) => void): this;
-        on(event: "exit", listener: (exitCode: number) => void): this;
-        on(event: "message", listener: (value: any) => void): this;
-        on(event: "online", listener: () => void): this;
-        on(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        once(event: "error", listener: (err: any) => void): this;
-        once(event: "exit", listener: (exitCode: number) => void): this;
-        once(event: "message", listener: (value: any) => void): this;
-        once(event: "online", listener: () => void): this;
-        once(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        prependListener(event: "error", listener: (err: any) => void): this;
-        prependListener(event: "exit", listener: (exitCode: number) => void): this;
-        prependListener(event: "message", listener: (value: any) => void): this;
-        prependListener(event: "online", listener: () => void): this;
-        prependListener(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        prependOnceListener(event: "error", listener: (err: any) => void): this;
-        prependOnceListener(event: "exit", listener: (exitCode: number) => void): this;
-        prependOnceListener(event: "message", listener: (value: any) => void): this;
-        prependOnceListener(event: "online", listener: () => void): this;
-        prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        removeListener(event: "error", listener: (err: any) => void): this;
-        removeListener(event: "exit", listener: (exitCode: number) => void): this;
-        removeListener(event: "message", listener: (value: any) => void): this;
-        removeListener(event: "online", listener: () => void): this;
-        removeListener(event: string | symbol, listener: (...args: any[]) => void): this;
-
-        off(event: "error", listener: (err: any) => void): this;
-        off(event: "exit", listener: (exitCode: number) => void): this;
-        off(event: "message", listener: (value: any) => void): this;
-        off(event: "online", listener: () => void): this;
-        off(event: string | symbol, listener: (...args: any[]) => void): this;
-    }
 }
 
 declare module "zlib" {
@@ -2614,8 +2480,6 @@ declare module "readline" {
         prependOnceListener(event: "SIGCONT", listener: () => void): this;
         prependOnceListener(event: "SIGINT", listener: () => void): this;
         prependOnceListener(event: "SIGTSTP", listener: () => void): this;
-
-        [Symbol.asyncIterator](): AsyncIterableIterator<string>;
     }
 
     type ReadLine = Interface; // type forwarded for backwards compatiblity
@@ -3628,11 +3492,6 @@ declare module "net" {
         exclusive?: boolean;
         readableAll?: boolean;
         writableAll?: boolean;
-        /**
-         * Will disable dual-stack support, i.e., binding to address `::` won't make `0.0.0.0` be bound.
-         * @default false
-         */
-        ipv6Only?: boolean;
     }
 
     // https://github.com/nodejs/node/blob/master/lib/net.js
@@ -3749,11 +3608,6 @@ declare module "dgram" {
         reuseAddr?: boolean;
         recvBufferSize?: number;
         sendBufferSize?: number;
-        /**
-         * Will disable dual-stack support, i.e., binding to address `::` won't make `0.0.0.0` be bound.
-         * @default false
-         */
-        ipv6Only?: boolean;
         lookup?: (hostname: string, options: dns.LookupOneOptions, callback: (err: NodeJS.ErrnoException, address: string, family: number) => void) => void;
     }
 
@@ -4995,7 +4849,7 @@ declare module "fs" {
         offset: number,
         length: number,
         position: number | null,
-        callback: (err: NodeJS.ErrnoException, bytesRead: number, buffer: TBuffer) => void,
+        callback?: (err: NodeJS.ErrnoException, bytesRead: number, buffer: TBuffer) => void,
     ): void;
 
     // NOTE: This namespace provides design-time support for util.promisify. Exported members do not exist at runtime.
@@ -6603,8 +6457,6 @@ declare module "tls" {
         cleartext: any;
     }
 
-    type TlsVersion = 'TLSv1.2' | 'TLSv1.1' | 'TLSv1';
-
     interface SecureContextOptions {
         pfx?: string | Buffer | Array<string | Buffer | Object>;
         key?: string | Buffer | Array<Buffer | Object>;
@@ -6620,22 +6472,6 @@ declare module "tls" {
         secureOptions?: number; // Value is a numeric bitmask of the `SSL_OP_*` options
         secureProtocol?: string; // SSL Method, e.g. SSLv23_method
         sessionIdContext?: string;
-
-        /**
-         * Set the maximum TLS version to allow.
-         * Cannot be specified along with the `secureProtocol` option, use one or the other.
-         * @default 'TLSv1.2'
-         */
-        maxVersion?: TlsVersion;
-
-        /**
-         * Cannot be specified along with the
-         * `secureProtocol` option, use one or the other.
-         * It is not recommended to use
-         * less than TLSv1.2, but it may be required for interoperability.
-         * @default 'TLSv1.2'
-         */
-        minVersion?: TlsVersion;
     }
 
     interface SecureContext {
@@ -9171,66 +9007,4 @@ declare module "perf_hooks" {
     }
 
     const performance: Performance;
-}
-
-declare module "trace_events" {
-    /**
-     * The `Tracing` object is used to enable or disable tracing for sets of
-     * categories. Instances are created using the
-     * `trace_events.createTracing()` method.
-     *
-     * When created, the `Tracing` object is disabled. Calling the
-     * `tracing.enable()` method adds the categories to the set of enabled trace
-     * event categories. Calling `tracing.disable()` will remove the categories
-     * from the set of enabled trace event categories.
-     */
-    export interface Tracing {
-        /**
-         * A comma-separated list of the trace event categories covered by this
-         * `Tracing` object.
-         */
-        readonly categories: string;
-
-        /**
-         * Disables this `Tracing` object.
-         *
-         * Only trace event categories _not_ covered by other enabled `Tracing`
-         * objects and _not_ specified by the `--trace-event-categories` flag
-         * will be disabled.
-         */
-        disable(): void;
-
-        /**
-         * Enables this `Tracing` object for the set of categories covered by
-         * the `Tracing` object.
-         */
-        enable(): void;
-
-        /**
-         * `true` only if the `Tracing` object has been enabled.
-         */
-        readonly enabled: boolean;
-    }
-
-    interface CreateTracingOptions {
-        /**
-         * An array of trace category names. Values included in the array are
-         * coerced to a string when possible. An error will be thrown if the
-         * value cannot be coerced.
-         */
-        categories: string[];
-    }
-
-    /**
-     * Creates and returns a Tracing object for the given set of categories.
-     */
-    export function createTracing(options: CreateTracingOptions): Tracing;
-
-    /**
-     * Returns a comma-separated list of all currently-enabled trace event
-     * categories. The current set of enabled trace event categories is
-     * determined by the union of all currently-enabled `Tracing` objects and
-     * any categories enabled using the `--trace-event-categories` flag.
-     */
-    export function getEnabledCategories(): string;
 }
