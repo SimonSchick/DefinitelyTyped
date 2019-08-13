@@ -396,7 +396,7 @@ export interface AnySchema {
     /**
      * Overrides the global validate() options for the current key and any sub-key.
      */
-    options(options: ValidationOptions): this;
+    preferences(options: ValidationOptions): this;
 
     /**
      * Sets the options.convert options to false which prevent type casting for the current key and any child keys.
@@ -1327,7 +1327,7 @@ export function unit(name: string): Schema;
 /**
  * Overrides the global validate() options for the current key and any sub-key.
  */
-export function options(options: ValidationOptions): Schema;
+export function preferences(options: ValidationOptions): Schema;
 
 /**
  * Sets the options.convert options to false which prevent type casting for the current key and any child keys.

@@ -294,7 +294,7 @@ anySchema = Joi.any();
     anySchema = anySchema.example(obj);
     anySchema = anySchema.unit(str);
 
-    anySchema = anySchema.options(validOpts);
+    anySchema = anySchema.preferences(validOpts);
     anySchema = anySchema.strict();
     anySchema = anySchema.strict(bool);
     anySchema = anySchema.concat(x);
@@ -384,7 +384,7 @@ arrSchema = arrSchema.items([schemaMap, schemaMap, schemaLike]);
     arrSchema = arrSchema.example(obj);
     arrSchema = arrSchema.unit(str);
 
-    arrSchema = arrSchema.options(validOpts);
+    arrSchema = arrSchema.preferences(validOpts);
     arrSchema = arrSchema.strict();
     arrSchema = arrSchema.concat(x);
 
@@ -437,7 +437,7 @@ boolSchema = Joi.boolean();
     boolSchema = boolSchema.example(obj);
     boolSchema = boolSchema.unit(str);
 
-    boolSchema = boolSchema.options(validOpts);
+    boolSchema = boolSchema.preferences(validOpts);
     boolSchema = boolSchema.strict();
     boolSchema = boolSchema.concat(x);
 
@@ -512,7 +512,7 @@ binSchema = binSchema.length(num);
     binSchema = binSchema.example(obj);
     binSchema = binSchema.unit(str);
 
-    binSchema = binSchema.options(validOpts);
+    binSchema = binSchema.preferences(validOpts);
     binSchema = binSchema.strict();
     binSchema = binSchema.concat(x);
 
@@ -598,7 +598,7 @@ dateSchema = dateSchema.timestamp('unix');
     dateSchema = dateSchema.example(obj);
     dateSchema = dateSchema.unit(str);
 
-    dateSchema = dateSchema.options(validOpts);
+    dateSchema = dateSchema.preferences(validOpts);
     dateSchema = dateSchema.strict();
     dateSchema = dateSchema.concat(x);
 
@@ -674,7 +674,7 @@ numSchema = numSchema.port();
     numSchema = numSchema.example(obj);
     numSchema = numSchema.unit(str);
 
-    numSchema = numSchema.options(validOpts);
+    numSchema = numSchema.preferences(validOpts);
     numSchema = numSchema.strict();
     numSchema = numSchema.concat(x);
 
@@ -794,7 +794,7 @@ objSchema = objSchema.ref();
     objSchema = objSchema.example(obj);
     objSchema = objSchema.unit(str);
 
-    objSchema = objSchema.options(validOpts);
+    objSchema = objSchema.preferences(validOpts);
     objSchema = objSchema.strict();
     objSchema = objSchema.concat(x);
 
@@ -894,7 +894,7 @@ strSchema = strSchema.dataUri(dataUriOpts);
     strSchema = strSchema.example(obj);
     strSchema = strSchema.unit(str);
 
-    strSchema = strSchema.options(validOpts);
+    strSchema = strSchema.preferences(validOpts);
     strSchema = strSchema.strict();
     strSchema = strSchema.concat(x);
 
@@ -1096,7 +1096,7 @@ schema = Joi.meta(obj);
 schema = Joi.example(obj);
 schema = Joi.unit(str);
 
-schema = Joi.options(validOpts);
+schema = Joi.preferences(validOpts);
 schema = Joi.strict();
 schema = Joi.strict(bool);
 schema = Joi.concat(x);
@@ -1151,7 +1151,7 @@ schema = Joi.meta(obj);
 schema = Joi.example(obj);
 schema = Joi.unit(str);
 
-schema = Joi.options(validOpts);
+schema = Joi.preferences(validOpts);
 schema = Joi.strict();
 schema = Joi.strict(bool);
 schema = Joi.concat(x);
