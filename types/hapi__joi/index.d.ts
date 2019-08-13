@@ -265,10 +265,6 @@ export interface StringRegexOptions {
     invert?: boolean;
 }
 
-export interface JoiObject {
-    isJoi: boolean;
-}
-
 export interface ErrorOptions {
     /**
      * Boolean value indicating whether the error handler should be used for all errors or only for errors occurring
@@ -279,7 +275,8 @@ export interface ErrorOptions {
     self?: boolean;
 }
 
-export interface ValidationError extends Error, JoiObject {
+export interface ValidationError extends Error {
+    isJoi: true;
     details: ValidationErrorItem[];
     annotate(): string;
     _object: any;
@@ -318,7 +315,7 @@ export type Schema = AnySchema
     | StringSchema
     | LazySchema;
 
-export interface AnySchema extends JoiObject {
+export interface AnySchema {
     schemaType?: Types | string;
 
     /**
@@ -1061,7 +1058,8 @@ export interface AlternativesSchema extends AnySchema {
 export interface LazySchema extends AnySchema {
 }
 
-export interface Reference extends JoiObject {
+export interface Reference {
+    isJoi: true;
     (value: any, validationOptions: ValidationOptions): any;
     isContext: boolean;
     key: string;
@@ -1099,7 +1097,8 @@ export interface Extension {
     rules?: Rules[];
 }
 
-export interface Err extends JoiObject {
+export interface Err {
+    isJoi: true;
     toString(): string;
 }
 
@@ -1371,3 +1370,9 @@ export function raw(isRaw?: boolean): Schema;
  * @param schema - any object or joi schema to match. An undefined schema unsets that rule.
  */
 export function empty(schema?: any): Schema;
+
+/**
+ * Checks whether or not the provided argument is a joi schema.
+ * @param val
+ */
+export function isSchema(val: any): val is AnySchema;

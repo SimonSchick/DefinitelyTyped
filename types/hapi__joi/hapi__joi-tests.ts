@@ -1173,3 +1173,5 @@ schema = Joi.symbol().map(new Map<string, symbol>());
 schema = Joi.symbol().map({
     key: Symbol('asd'),
 });
+
+const b = Joi.isSchema(123);
