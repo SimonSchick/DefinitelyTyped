@@ -184,9 +184,6 @@ validErrItem = {
     context: obj
 };
 
-validErrFunc = errs => errs;
-validErrFunc = errs => errs[0];
-validErrFunc = errs => 'Some error';
 validErrFunc = errs => err;
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---

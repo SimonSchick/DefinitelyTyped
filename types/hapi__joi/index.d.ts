@@ -280,7 +280,7 @@ export interface ValidationErrorItem {
     context?: Context;
 }
 
-export type ValidationErrorFunction = (errors: ValidationErrorItem[]) => string | ValidationErrorItem | ValidationErrorItem[] | Error;
+export type ValidationErrorFunction = (errors: ValidationErrorItem[]) => Error;
 
 export interface ValidationResult<T> extends Pick<Promise<T>, 'then' | 'catch'> {
     error: ValidationError;
