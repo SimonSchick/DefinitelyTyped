@@ -615,7 +615,6 @@ funcSchema = Joi.func();
 funcSchema = funcSchema.arity(num);
 funcSchema = funcSchema.minArity(num);
 funcSchema = funcSchema.maxArity(num);
-funcSchema = funcSchema.ref();
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -753,6 +752,9 @@ objSchema = objSchema.optionalKeys(str, str);
 
 objSchema = objSchema.forbiddenKeys(str);
 objSchema = objSchema.forbiddenKeys(str, str);
+
+objSchema = objSchema.ref();
+
 
 { // common
     objSchema = objSchema.allow(x);

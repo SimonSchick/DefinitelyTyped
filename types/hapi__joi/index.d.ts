@@ -242,6 +242,11 @@ export interface WhenSchemaOptions {
 }
 
 export interface ReferenceOptions {
+    /**
+     * If set sets the reference relative starting point.
+     * Cannot be combined with separator prefix characters. Defaults to the reference key prefix (or `1` if none present).
+     */
+    ancestor?: number;
     separator?: string;
     contextPrefix?: string;
     default?: any;
@@ -947,6 +952,11 @@ export interface ObjectSchema extends AnySchema {
      * The behavior is exactly the same as requiredKeys.
      */
     forbiddenKeys(...children: string[]): this;
+
+    /**
+     * Requires the function to be a Joi reference.
+     */
+    ref(): this;
 }
 
 export interface BinarySchema extends AnySchema {
@@ -1040,11 +1050,6 @@ export interface FunctionSchema extends AnySchema {
      * @param n - the minimal arity expected.
      */
     maxArity(n: number): this;
-
-    /**
-     * Requires the function to be a Joi reference.
-     */
-    ref(): this;
 }
 
 export interface AlternativesSchema extends AnySchema {
