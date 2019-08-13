@@ -1,4 +1,4 @@
-import Joi = require('@hapi/joi');
+import Joi = require('joi');
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -83,18 +83,11 @@ renOpts = { ignoreUndefined: bool };
 
 let emailOpts: Joi.EmailOptions = {};
 
-emailOpts = { allowUnicode: bool };
-emailOpts = { tlds: { allow: strArr } };
-emailOpts = { minDomainSegments: num };
-emailOpts = { tlds: false };
-
-// --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
-
-let domainOpts: Joi.DomainOptions = {};
-
-domainOpts = { allowUnicode: bool };
-domainOpts = { tlds: { allow: strArr } };
-domainOpts = { minDomainSegments: num };
+emailOpts = { errorLevel: num };
+emailOpts = { errorLevel: bool };
+emailOpts = { tldWhitelist: strArr };
+emailOpts = { tldWhitelist: obj };
+emailOpts = { minDomainAtoms: num };
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -335,6 +328,7 @@ arrSchema = arrSchema.length(ref);
 arrSchema = arrSchema.unique();
 arrSchema = arrSchema.unique((a, b) => a.test === b.test);
 arrSchema = arrSchema.unique('customer.id');
+arrSchema = arrSchema.unique('customer.id', {ignoreUndefined: true});
 
 arrSchema = arrSchema.items(numSchema);
 arrSchema = arrSchema.items(numSchema, strSchema, schemaLike);
@@ -706,24 +700,29 @@ objSchema = objSchema.pattern(exp, schemaLike);
 objSchema = objSchema.and(str);
 objSchema = objSchema.and(str, str);
 objSchema = objSchema.and(str, str, str);
+objSchema = objSchema.and(strArr);
 
 objSchema = objSchema.nand(str);
 objSchema = objSchema.nand(str, str);
 objSchema = objSchema.nand(str, str, str);
+objSchema = objSchema.nand(strArr);
 
 objSchema = objSchema.schema();
 
 objSchema = objSchema.or(str);
 objSchema = objSchema.or(str, str);
 objSchema = objSchema.or(str, str, str);
+objSchema = objSchema.or(strArr);
 
 objSchema = objSchema.oxor(str);
 objSchema = objSchema.oxor(str, str);
 objSchema = objSchema.oxor(str, str, str);
+objSchema = objSchema.oxor(strArr);
 
 objSchema = objSchema.xor(str);
 objSchema = objSchema.xor(str, str);
 objSchema = objSchema.xor(str, str, str);
+objSchema = objSchema.xor(strArr);
 
 objSchema = objSchema.with(str, str);
 objSchema = objSchema.with(str, strArr);
@@ -747,12 +746,15 @@ objSchema = objSchema.type(func, str);
 
 objSchema = objSchema.requiredKeys(str);
 objSchema = objSchema.requiredKeys(str, str);
+objSchema = objSchema.requiredKeys(strArr);
 
 objSchema = objSchema.optionalKeys(str);
 objSchema = objSchema.optionalKeys(str, str);
+objSchema = objSchema.optionalKeys(strArr);
 
 objSchema = objSchema.forbiddenKeys(str);
 objSchema = objSchema.forbiddenKeys(str, str);
+objSchema = objSchema.forbiddenKeys(strArr);
 
 { // common
     objSchema = objSchema.allow(x);
@@ -829,8 +831,6 @@ strSchema = strSchema.alphanum();
 strSchema = strSchema.token();
 strSchema = strSchema.email();
 strSchema = strSchema.email(emailOpts);
-strSchema = strSchema.domain();
-strSchema = strSchema.domain(domainOpts);
 strSchema = strSchema.ip();
 strSchema = strSchema.ip(ipOpts);
 strSchema = strSchema.uri();
@@ -906,17 +906,17 @@ strSchema = strSchema.dataUri(dataUriOpts);
 
 schema = Joi.alternatives();
 schema = Joi.alternatives().try(schemaArr);
-schema = Joi.alternatives().try([schema, schema]);
+schema = Joi.alternatives().try(schema, schema);
 
 schema = Joi.alternatives(schemaArr);
-schema = Joi.alternatives([schema, anySchema, boolSchema]);
+schema = Joi.alternatives(schema, anySchema, boolSchema);
 
 schema = Joi.alt();
 schema = Joi.alt().try(schemaArr);
-schema = Joi.alt().try([schema, schema]);
+schema = Joi.alt().try(schema, schema);
 
 schema = Joi.alt(schemaArr);
-schema = Joi.alt([schema, anySchema, boolSchema]);
+schema = Joi.alt(schema, anySchema, boolSchema);
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -1044,7 +1044,11 @@ const Joi3 = Joi.extend({
     ],
 });
 
+const Joi4 = Joi.extend([{ name: '', base: schema }, { name: '', base: schema }]);
+
 const Joi5 = Joi.extend({ name: '', base: schema }, { name: '', base: schema });
+
+const Joi6 = Joi.extend({ name: '', base: schema }, [{ name: '', base: schema }, { name: '', base: schema }]);
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 

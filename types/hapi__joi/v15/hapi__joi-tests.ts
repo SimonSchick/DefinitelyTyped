@@ -706,24 +706,29 @@ objSchema = objSchema.pattern(exp, schemaLike);
 objSchema = objSchema.and(str);
 objSchema = objSchema.and(str, str);
 objSchema = objSchema.and(str, str, str);
+objSchema = objSchema.and(strArr);
 
 objSchema = objSchema.nand(str);
 objSchema = objSchema.nand(str, str);
 objSchema = objSchema.nand(str, str, str);
+objSchema = objSchema.nand(strArr);
 
 objSchema = objSchema.schema();
 
 objSchema = objSchema.or(str);
 objSchema = objSchema.or(str, str);
 objSchema = objSchema.or(str, str, str);
+objSchema = objSchema.or(strArr);
 
 objSchema = objSchema.oxor(str);
 objSchema = objSchema.oxor(str, str);
 objSchema = objSchema.oxor(str, str, str);
+objSchema = objSchema.oxor(strArr);
 
 objSchema = objSchema.xor(str);
 objSchema = objSchema.xor(str, str);
 objSchema = objSchema.xor(str, str, str);
+objSchema = objSchema.xor(strArr);
 
 objSchema = objSchema.with(str, str);
 objSchema = objSchema.with(str, strArr);
@@ -747,12 +752,15 @@ objSchema = objSchema.type(func, str);
 
 objSchema = objSchema.requiredKeys(str);
 objSchema = objSchema.requiredKeys(str, str);
+objSchema = objSchema.requiredKeys(strArr);
 
 objSchema = objSchema.optionalKeys(str);
 objSchema = objSchema.optionalKeys(str, str);
+objSchema = objSchema.optionalKeys(strArr);
 
 objSchema = objSchema.forbiddenKeys(str);
 objSchema = objSchema.forbiddenKeys(str, str);
+objSchema = objSchema.forbiddenKeys(strArr);
 
 { // common
     objSchema = objSchema.allow(x);
@@ -906,17 +914,17 @@ strSchema = strSchema.dataUri(dataUriOpts);
 
 schema = Joi.alternatives();
 schema = Joi.alternatives().try(schemaArr);
-schema = Joi.alternatives().try([schema, schema]);
+schema = Joi.alternatives().try(schema, schema);
 
 schema = Joi.alternatives(schemaArr);
-schema = Joi.alternatives([schema, anySchema, boolSchema]);
+schema = Joi.alternatives(schema, anySchema, boolSchema);
 
 schema = Joi.alt();
 schema = Joi.alt().try(schemaArr);
-schema = Joi.alt().try([schema, schema]);
+schema = Joi.alt().try(schema, schema);
 
 schema = Joi.alt(schemaArr);
-schema = Joi.alt([schema, anySchema, boolSchema]);
+schema = Joi.alt(schema, anySchema, boolSchema);
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -1044,7 +1052,11 @@ const Joi3 = Joi.extend({
     ],
 });
 
+const Joi4 = Joi.extend([{ name: '', base: schema }, { name: '', base: schema }]);
+
 const Joi5 = Joi.extend({ name: '', base: schema }, { name: '', base: schema });
+
+const Joi6 = Joi.extend({ name: '', base: schema }, [{ name: '', base: schema }, { name: '', base: schema }]);
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 

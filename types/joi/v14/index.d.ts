@@ -1,4 +1,4 @@
-// Type definitions for @hapi/joi 16.0
+// Type definitions for joi 14.3
 // Project: https://github.com/hapijs/joi
 // Definitions by: Bart van der Schoor <https://github.com/Bartvds>
 //                 Laurence Dougal Myers <https://github.com/laurence-myers>
@@ -16,8 +16,6 @@
 //                 Will Garcia <https://github.com/thewillg>
 //                 Simon Schick <https://github.com/SimonSchick>
 //                 Alejandro Fernandez Haro <https://github.com/afharo>
-//                 Silas Rech <https://github.com/lenovouser>
-//                 Anand Chowdhary <https://github.com/AnandChowdhary>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.4
 
@@ -98,66 +96,17 @@ export interface RenameOptions {
 
 export interface EmailOptions {
     /**
-     * If `true`, Unicode characters are permitted
-     *
-     * @default true
+     * Numerical threshold at which an email address is considered invalid
      */
-    allowUnicode?: boolean;
+    errorLevel?: number | boolean;
     /**
-     * Options for TLD (top level domain) validation. By default, the TLD must be a valid name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt)
-     *
-     * @default { allow: true }
+     * Specifies a list of acceptable TLDs.
      */
-    tlds?: {
-        /**
-         * - `true` to use the IANA list of registered TLDs. This is the default value.
-         * - `false` to allow any TLD not listed in the `deny` list, if present.
-         * - A `Set` or array of the allowed TLDs. Cannot be used together with `deny`.
-         */
-        allow?: Set<string> | string[] | boolean;
-        /**
-         * - A `Set` or array of the forbidden TLDs. Cannot be used together with a custom `allow` list.
-         */
-        deny?: Set<string> | string[];
-    } | false;
+    tldWhitelist?: string[] | object;
     /**
-     * Number of segments required for the domain. Be careful since some domains, such as `io`, directly allow email.
-     *
-     * @default 2
+     * Number of atoms required for the domain. Be careful since some domains, such as io, directly allow email.
      */
-    minDomainSegments?: number;
-}
-
-export interface DomainOptions {
-    /**
-     * If `true`, Unicode characters are permitted
-     *
-     * @default true
-     */
-    allowUnicode?: boolean;
-    /**
-     * Options for TLD (top level domain) validation. By default, the TLD must be a valid name listed on the [IANA registry](http://data.iana.org/TLD/tlds-alpha-by-domain.txt)
-     *
-     * @default { allow: true }
-     */
-    tlds?: {
-        /**
-         * - `true` to use the IANA list of registered TLDs. This is the default value.
-         * - `false` to allow any TLD not listed in the `deny` list, if present.
-         * - A `Set` or array of the allowed TLDs. Cannot be used together with `deny`.
-         */
-        allow?: Set<string> | string[] | boolean;
-        /**
-         * - A `Set` or array of the forbidden TLDs. Cannot be used together with a custom `allow` list.
-         */
-        deny?: Set<string> | string[];
-    };
-    /**
-     * Number of segments required for the domain.
-     *
-     * @default 2
-     */
-    minDomainSegments?: number;
+    minDomainAtoms?: number;
 }
 
 export interface HexOptions {
@@ -260,6 +209,10 @@ export interface StringRegexOptions {
     invert?: boolean;
 }
 
+export interface ArrayUniqueOptions {
+    ignoreUndefined?: boolean;
+}
+
 export interface JoiObject {
     isJoi: boolean;
 }
@@ -327,6 +280,7 @@ export interface AnySchema extends JoiObject {
      * Whitelists a value
      */
     allow(...values: any[]): this;
+    allow(values: any[]): this;
 
     /**
      * By default, some Joi methods to function properly need to rely on the Joi instance they are attached to because
@@ -340,15 +294,21 @@ export interface AnySchema extends JoiObject {
      * Adds the provided values into the allowed whitelist and marks them as the only valid values allowed.
      */
     valid(...values: any[]): this;
+    valid(values: any[]): this;
     only(...values: any[]): this;
+    only(values: any[]): this;
     equal(...values: any[]): this;
+    equal(values: any[]): this;
 
     /**
      * Blacklists a value
      */
     invalid(...values: any[]): this;
+    invalid(values: any[]): this;
     disallow(...values: any[]): this;
+    disallow(values: any[]): this;
     not(...values: any[]): this;
+    not(values: any[]): this;
 
     /**
      * Marks a key as required which will not allow undefined as value. All keys are optional by default.
@@ -683,11 +643,6 @@ export interface StringSchema extends AnySchema {
     email(options?: EmailOptions): this;
 
     /**
-     * Requires the string value to be a valid domain.
-     */
-    domain(options?: DomainOptions): this;
-
-    /**
      * Requires the string value to be a valid ip address.
      */
     ip(options?: IpOptions): this;
@@ -769,6 +724,7 @@ export interface ArraySchema extends AnySchema {
 
     /**
      * List the types allowed for the array values.
+     * type can be an array of values, or multiple values can be passed as individual arguments.
      * If a given type is .required() then there must be a matching item in the array.
      * If a type is .forbidden() then it cannot appear in the array.
      * Required items can be added multiple times to signify that multiple items must be found.
@@ -778,15 +734,17 @@ export interface ArraySchema extends AnySchema {
      * @param type - a joi schema object to validate each array item against.
      */
     items(...types: SchemaLike[]): this;
+    items(types: SchemaLike[]): this;
 
     /**
      * Lists the types in sequence order for the array values where:
-     * @param type - a joi schema object to validate against each array item in sequence order.
+     * @param type - a joi schema object to validate against each array item in sequence order. type can be an array of values, or multiple values can be passed as individual arguments.
      * If a given type is .required() then there must be a matching item with the same index position in the array.
      * Errors will contain the number of items that didn't match.
      * Any unmatched item having a label will be mentioned explicitly.
      */
     ordered(...types: SchemaLike[]): this;
+    ordered(types: SchemaLike[]): this;
 
     /**
      * Specifies the minimum number of items in the array.
@@ -808,7 +766,7 @@ export interface ArraySchema extends AnySchema {
      * Be aware that a deep equality is performed on elements of the array having a type of object,
      * a performance penalty is to be expected for this kind of operation.
      */
-    unique(comparator?: string): this;
+    unique(comparator?: string, options?: ArrayUniqueOptions): this;
     unique<T = any>(comparator?: (a: T, b: T) => boolean): this;
 }
 
@@ -857,29 +815,34 @@ export interface ObjectSchema extends AnySchema {
      * an array of string values, or each peer provided as an argument.
      */
     and(...peers: string[]): this;
+    and(peers: string[]): this;
 
     /**
      * Defines a relationship between keys where not all peers can be present at the same time.
      * @param peers - the key names of which if one present, the others may not all be present.
-     * peers can be a single string value or each peer provided as an argument.
+     * peers can be a single string value, an array of string values, or each peer provided as an argument.
      */
     nand(...peers: string[]): this;
+    nand(peers: string[]): this;
 
     /**
      * Defines a relationship between keys where one of the peers is required (and more than one is allowed).
      */
     or(...peers: string[]): this;
+    or(peers: string[]): this;
 
     /**
      * Defines an exclusive relationship between a set of keys where only one is allowed but none are required where:
      * `peers` - the exclusive key names that must not appear together but where none are required.
      */
     oxor(...peers: string[]): this;
+    oxor(peers: string[]): this;
 
     /**
      * Defines an exclusive relationship between a set of keys. one of them is required but not at the same time where:
      */
     xor(...peers: string[]): this;
+    xor(peers: string[]): this;
 
     /**
      * Requires the presence of other keys whenever the specified key is present.
@@ -918,34 +881,37 @@ export interface ObjectSchema extends AnySchema {
     /**
      * Sets the specified children to required.
      *
-     * @param children - can be a single string value or each child provided as an argument.
+     * @param children - can be a single string value, an array of string values, or each child provided as an argument.
      *
      *   var schema = Joi.object().keys({ a: { b: Joi.number() }, c: { d: Joi.string() } });
      *   var requiredSchema = schema.requiredKeys('', 'a.b', 'c', 'c.d');
      *
      * Note that in this example '' means the current object, a is not required but b is, as well as c and d.
      */
+    requiredKeys(children: string[]): this;
     requiredKeys(...children: string[]): this;
 
     /**
      * Sets the specified children to optional.
      *
-     * @param children - can be a single string value or each child provided as an argument.
+     * @param children - can be a single string value, an array of string values, or each child provided as an argument.
      *
      * The behavior is exactly the same as requiredKeys.
      */
+    optionalKeys(children: string[]): this;
     optionalKeys(...children: string[]): this;
 
     /**
      * Sets the specified children to forbidden.
      *
-     * @param children - can be a single string value or each child provided as an argument.
+     * @param children - can be a single string value, an array of string values, or each child provided as an argument.
      *
      *   const schema = Joi.object().keys({ a: { b: Joi.number().required() }, c: { d: Joi.string().required() } });
      *   const optionalSchema = schema.forbiddenKeys('a.b', 'c.d');
      *
      * The behavior is exactly the same as requiredKeys.
      */
+    forbiddenKeys(children: string[]): this;
     forbiddenKeys(...children: string[]): this;
 }
 
@@ -1048,7 +1014,8 @@ export interface FunctionSchema extends AnySchema {
 }
 
 export interface AlternativesSchema extends AnySchema {
-    try(types?: SchemaLike[]): this;
+    try(types: SchemaLike[]): this;
+    try(...types: SchemaLike[]): this;
     when(ref: string | Reference, options: WhenOptions): this;
     when(ref: Schema, options: WhenSchemaOptions): this;
 }
@@ -1167,12 +1134,14 @@ export function symbol(): SymbolSchema;
 /**
  * Generates a type that will match one of the provided alternative schemas
  */
-export function alternatives(types?: SchemaLike[]): AlternativesSchema;
+export function alternatives(types: SchemaLike[]): AlternativesSchema;
+export function alternatives(...types: SchemaLike[]): AlternativesSchema;
 
 /**
  * Alias for `alternatives`
  */
-export function alt(types?: SchemaLike[]): AlternativesSchema;
+export function alt(types: SchemaLike[]): AlternativesSchema;
+export function alt(...types: SchemaLike[]): AlternativesSchema;
 
 /**
  * Generates a placeholder schema for a schema that you would provide with the fn.
@@ -1230,11 +1199,11 @@ export function reach(schema: ObjectSchema, path: string | string[]): Schema;
 /**
  * Creates a new Joi instance customized with the extension(s) you provide included.
  */
-export function extend(...extensions: Extension[]): any;
+export function extend(extension: Extension|Extension[], ...extensions: Array<Extension|Extension[]>): any;
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
-import * as Module from '@hapi/joi';
+import * as Module from 'joi';
 export type Root = typeof Module;
 export type DefaultsFunction = (root: Schema) => Schema;
 
@@ -1265,15 +1234,21 @@ export function allow(values: any[]): Schema;
  * Adds the provided values into the allowed whitelist and marks them as the only valid values allowed.
  */
 export function valid(value: any, ...values: any[]): Schema;
+export function valid(values: any[]): Schema;
 export function only(value: any, ...values: any[]): Schema;
+export function only(values: any[]): Schema;
 export function equal(value: any, ...values: any[]): Schema;
+export function equal(values: any[]): Schema;
 
 /**
  * Blacklists a value
  */
 export function invalid(value: any, ...values: any[]): Schema;
+export function invalid(values: any[]): Schema;
 export function disallow(value: any, ...values: any[]): Schema;
+export function disallow(values: any[]): Schema;
 export function not(value: any, ...values: any[]): Schema;
+export function not(values: any[]): Schema;
 
 /**
  * Marks a key as required which will not allow undefined as value. All keys are optional by default.
