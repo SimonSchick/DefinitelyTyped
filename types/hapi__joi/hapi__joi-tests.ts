@@ -821,9 +821,9 @@ strSchema = strSchema.length(num);
 strSchema = strSchema.length(num, str);
 strSchema = strSchema.length(ref);
 strSchema = strSchema.length(ref, str);
-strSchema = strSchema.regex(exp);
-strSchema = strSchema.regex(exp, str);
-strSchema = strSchema.regex(exp, stringRegexOpts);
+strSchema = strSchema.pattern(exp);
+strSchema = strSchema.pattern(exp, str);
+strSchema = strSchema.pattern(exp, stringRegexOpts);
 strSchema = strSchema.replace(exp, str);
 strSchema = strSchema.replace(str, str);
 strSchema = strSchema.alphanum();
@@ -957,7 +957,7 @@ schema = Joi.lazy(() => schema, { once: true });
         let value = { username: 'example', password: 'example' };
         const schema = Joi.object().keys({
             username: Joi.string().max(255).required(),
-            password: Joi.string().regex(/^[a-zA-Z0-9]{3,255}$/).required(),
+            password: Joi.string().pattern(/^[a-zA-Z0-9]{3,255}$/).required(),
         });
         let returnValue: Joi.ValidationResult<typeof value>;
 

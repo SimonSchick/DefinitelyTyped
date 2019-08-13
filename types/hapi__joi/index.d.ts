@@ -650,7 +650,7 @@ export interface StringSchema extends AnySchema {
      *     name - optional pattern name.
      *     invert - optional boolean flag. Defaults to false behavior. If specified as true, the provided pattern will be disallowed instead of required.
      */
-    regex(pattern: RegExp, options?: string | StringRegexOptions): this;
+    pattern(pattern: RegExp, options?: string | StringRegexOptions): this;
 
     /**
      * Replace characters matching the given pattern with the specified replacement string where:
