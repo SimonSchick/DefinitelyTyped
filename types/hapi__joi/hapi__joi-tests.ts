@@ -58,16 +58,12 @@ validOpts = {
         root: str,
         key: str,
         messages: { wrapArrays: bool },
-        string: { base: str },
-        number: { base: str },
-        object: {
-            base: false,
-            children: { childRule: str }
-        },
-        customType: {
-            customRule: str
-        }
-    }
+        'string.base': str,
+        'number.base': str,
+        'object.base': false,
+        'object.children.childRule': str,
+        'customType.customRule': str
+    },
 };
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---

@@ -25,15 +25,13 @@
 
 export type Types = 'any' | 'alternatives' | 'array' | 'boolean' | 'binary' | 'date' | 'function' | 'lazy' | 'number' | 'object' | 'string';
 
-export type LanguageOptions = string | boolean | null | {
-    [key: string]: LanguageOptions;
-};
+export type LanguageOptions = string | boolean | null;
 
 export type LanguageRootOptions = {
     root?: string;
     key?: string;
     messages?: { wrapArrays?: boolean; };
-} & Partial<Record<Types, LanguageOptions>> & { [key: string]: LanguageOptions; };
+} & { [key: string]: LanguageOptions; };
 
 export interface ValidationOptions {
     /**
@@ -1080,7 +1078,9 @@ export interface Rules<P extends object = any> {
 export interface Extension {
     name: string;
     base?: Schema;
-    language?: LanguageOptions;
+    language?: {
+        [key: string]: LanguageOptions;
+    };
     coerce?(this: ExtensionBoundSchema, value: any, state: State, options: ValidationOptions): any;
     pre?(this: ExtensionBoundSchema, value: any, state: State, options: ValidationOptions): any;
     describe?(this: Schema, description: Description): Description;
