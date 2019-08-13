@@ -312,7 +312,6 @@ anySchema = Joi.any();
 
     anySchema = anySchema.error(err);
     anySchema = anySchema.error(validErrFunc);
-    anySchema = anySchema.error(validErrFunc, { self: true });
 }
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---

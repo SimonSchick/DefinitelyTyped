@@ -265,16 +265,6 @@ export interface StringRegexOptions {
     invert?: boolean;
 }
 
-export interface ErrorOptions {
-    /**
-     * Boolean value indicating whether the error handler should be used for all errors or only for errors occurring
-     * on this property (`true` value).
-     * This concept only makes sense for `array` or `object` schemas as other values don't have children.
-     * @default false
-     */
-    self?: boolean;
-}
-
 export interface ValidationError extends Error {
     isJoi: true;
     details: ValidationErrorItem[];
@@ -478,7 +468,7 @@ export interface AnySchema {
      * override, that error will be returned and the override will be ignored (unless the `abortEarly`
      * option has been set to `false`).
      */
-    error(err: Error | ValidationErrorFunction, options?: ErrorOptions): this;
+    error(err: Error | ValidationErrorFunction): this;
 
     /**
      * Returns a plain object representing the schema's rules and properties
