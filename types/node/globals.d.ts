@@ -341,7 +341,7 @@ declare class Buffer extends Uint8Array {
      * @param encoding encoding used to evaluate (defaults to 'utf8')
      */
     static byteLength(
-        string: string | NodeJS.TypedArray | DataView | ArrayBuffer | SharedArrayBuffer,
+        string: string | NodeJS.ArrayBufferView | ArrayBuffer | SharedArrayBuffer,
         encoding?: BufferEncoding
     ): number;
     /**
@@ -1152,4 +1152,5 @@ declare namespace NodeJS {
     }
 
     type TypedArray = Uint8Array | Uint8ClampedArray | Uint16Array | Uint32Array | Int8Array | Int16Array | Int32Array | Float32Array | Float64Array;
+    type ArrayBufferView = TypedArray | DataView;
 }
