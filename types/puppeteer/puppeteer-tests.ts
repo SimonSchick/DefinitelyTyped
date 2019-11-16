@@ -687,4 +687,12 @@ puppeteer.launch().then(async browser => {
   jsHandle.evaluateHandle(handle => {});
 
   const selected: string[] = await elementHandle.select('a', 'b', 'c');
+
+  page.evaluate((a: string, b: number, c: Date, d: boolean, e: object) => {}, "foo", 5, new Date(), false, false); // $ExpectError
+
+  page.evaluateHandle((a: string, b: number, c: Date, d: boolean, e: object) => {}, "foo", 5, new Date(), false, false); // $ExpectError
+
+  page.$eval("body", (a: string, b: number, c: Date, d: boolean, e: object) => {}, "foo", 5, new Date(), false, false); // $ExpectError
+
+  page.$$eval("div", (a: string, b: number, c: Date, d: boolean, e: object) => {}, "foo", 5, new Date(), false, false); // $ExpectError
 })();

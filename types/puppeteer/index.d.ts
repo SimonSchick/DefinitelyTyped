@@ -52,157 +52,13 @@ export interface Evalable {
    *
    * @param selector A selector to query for
    * @param pageFunction Function to be evaluated in browser context
-   * @returns Promise which resolves to the return value of pageFunction
-   */
-  $eval<R>(
-    selector: string,
-    pageFunction: (element: Element) => R | Promise<R>,
-  ): Promise<WrapElementHandle<R>>;
-
-  /**
-   * This method runs `document.querySelector` within the context and passes it as the first argument to `pageFunction`.
-   * If there's no element matching `selector`, the method throws an error.
-   *
-   * If `pageFunction` returns a Promise, then `$eval` would wait for the promise to resolve and return its value.
-   *
-   * @param selector A selector to query for
-   * @param pageFunction Function to be evaluated in browser context
-   * @param x1 First argument to pass to pageFunction
-   * @returns Promise which resolves to the return value of pageFunction
-   */
-  $eval<R, X1>(
-    selector: string,
-    pageFunction: (element: Element, x1: UnwrapElementHandle<X1>) => R | Promise<R>,
-    x1: X1,
-  ): Promise<WrapElementHandle<R>>;
-
-  /**
-   * This method runs `document.querySelector` within the context and passes it as the first argument to `pageFunction`.
-   * If there's no element matching `selector`, the method throws an error.
-   *
-   * If `pageFunction` returns a Promise, then `$eval` would wait for the promise to resolve and return its value.
-   *
-   * @param selector A selector to query for
-   * @param pageFunction Function to be evaluated in browser context
-   * @param x1 First argument to pass to pageFunction
-   * @param x2 Second argument to pass to pageFunction
-   * @returns Promise which resolves to the return value of pageFunction
-   */
-  $eval<R, X1, X2>(
-    selector: string,
-    pageFunction: (element: Element, x1: UnwrapElementHandle<X1>, x2: UnwrapElementHandle<X2>) => R | Promise<R>,
-    x1: X1,
-    x2: X2,
-  ): Promise<WrapElementHandle<R>>;
-
-  /**
-   * This method runs `document.querySelector` within the context and passes it as the first argument to `pageFunction`.
-   * If there's no element matching `selector`, the method throws an error.
-   *
-   * If `pageFunction` returns a Promise, then `$eval` would wait for the promise to resolve and return its value.
-   *
-   * @param selector A selector to query for
-   * @param pageFunction Function to be evaluated in browser context
-   * @param x1 First argument to pass to pageFunction
-   * @param x2 Second argument to pass to pageFunction
-   * @param x3 Third argument to pass to pageFunction
-   * @returns Promise which resolves to the return value of pageFunction
-   */
-  $eval<R, X1, X2, X3>(
-    selector: string,
-    pageFunction: (element: Element, x1: UnwrapElementHandle<X1>, x2: UnwrapElementHandle<X2>, x3: UnwrapElementHandle<X3>) => R | Promise<R>,
-    x1: X1,
-    x2: X2,
-    x3: X3,
-  ): Promise<WrapElementHandle<R>>;
-
-  /**
-   * This method runs `document.querySelector` within the context and passes it as the first argument to `pageFunction`.
-   * If there's no element matching `selector`, the method throws an error.
-   *
-   * If `pageFunction` returns a Promise, then `$eval` would wait for the promise to resolve and return its value.
-   *
-   * @param selector A selector to query for
-   * @param pageFunction Function to be evaluated in browser context
    * @param args Arguments to pass to pageFunction
    * @returns Promise which resolves to the return value of pageFunction
    */
-  $eval<R>(
+  $eval<R, TS extends SerializableOrJSHandle[]>(
     selector: string,
-    pageFunction: (element: Element, ...args: any[]) => R | Promise<R>,
-    ...args: SerializableOrJSHandle[],
-  ): Promise<WrapElementHandle<R>>;
-
-  /**
-   * This method runs `Array.from(document.querySelectorAll(selector))` within the context and passes it as the
-   * first argument to `pageFunction`.
-   *
-   * If `pageFunction` returns a Promise, then `$$eval` would wait for the promise to resolve and return its value.
-   *
-   * @param selector A selector to query for
-   * @param pageFunction Function to be evaluated in browser context
-   * @returns Promise which resolves to the return value of pageFunction
-   */
-  $$eval<R>(
-    selector: string,
-    pageFunction: (elements: Element[]) => R | Promise<R>,
-  ): Promise<WrapElementHandle<R>>;
-
-  /**
-   * This method runs `Array.from(document.querySelectorAll(selector))` within the context and passes it as the
-   * first argument to `pageFunction`.
-   *
-   * If `pageFunction` returns a Promise, then `$$eval` would wait for the promise to resolve and return its value.
-   *
-   * @param selector A selector to query for
-   * @param pageFunction Function to be evaluated in browser context
-   * @param x1 First argument to pass to pageFunction
-   * @returns Promise which resolves to the return value of pageFunction
-   */
-  $$eval<R, X1>(
-    selector: string,
-    pageFunction: (elements: Element[], x1: UnwrapElementHandle<X1>) => R | Promise<R>,
-    x1: X1,
-  ): Promise<WrapElementHandle<R>>;
-
-  /**
-   * This method runs `Array.from(document.querySelectorAll(selector))` within the context and passes it as the
-   * first argument to `pageFunction`.
-   *
-   * If `pageFunction` returns a Promise, then `$$eval` would wait for the promise to resolve and return its value.
-   *
-   * @param selector A selector to query for
-   * @param pageFunction Function to be evaluated in browser context
-   * @param x1 First argument to pass to pageFunction
-   * @param x2 Second argument to pass to pageFunction
-   * @returns Promise which resolves to the return value of pageFunction
-   */
-  $$eval<R, X1, X2>(
-    selector: string,
-    pageFunction: (elements: Element[], x1: UnwrapElementHandle<X1>, x2: UnwrapElementHandle<X2>) => R | Promise<R>,
-    x1: X1,
-    x2: X2,
-  ): Promise<WrapElementHandle<R>>;
-
-  /**
-   * This method runs `Array.from(document.querySelectorAll(selector))` within the context and passes it as the
-   * first argument to `pageFunction`.
-   *
-   * If `pageFunction` returns a Promise, then `$$eval` would wait for the promise to resolve and return its value.
-   *
-   * @param selector A selector to query for
-   * @param pageFunction Function to be evaluated in browser context
-   * @param x1 First argument to pass to pageFunction
-   * @param x2 Second argument to pass to pageFunction
-   * @param x3 Third argument to pass to pageFunction
-   * @returns Promise which resolves to the return value of pageFunction
-   */
-  $$eval<R, X1, X2, X3>(
-    selector: string,
-    pageFunction: (elements: Element[], x1: UnwrapElementHandle<X1>, x2: UnwrapElementHandle<X2>, x3: UnwrapElementHandle<X3>) => R | Promise<R>,
-    x1: X1,
-    x2: X2,
-    x3: X3,
+    pageFunction: (element: Element, ...args: TS) => R | Promise<R>,
+    ...args: TS
   ): Promise<WrapElementHandle<R>>;
 
   /**
@@ -216,9 +72,9 @@ export interface Evalable {
    * @param args Arguments to pass to pageFunction
    * @returns Promise which resolves to the return value of pageFunction
    */
-  $$eval<R>(
+  $$eval<R, TS extends SerializableOrJSHandle[]>(
     selector: string,
-    pageFunction: (elements: Element[], ...args: any[]) => R | Promise<R>,
+    pageFunction: (element: Element[], ...args: TS) => R | Promise<R>,
     ...args: SerializableOrJSHandle[]
   ): Promise<WrapElementHandle<R>>;
 }
@@ -231,10 +87,10 @@ export interface JSEvalable<A = any> {
      * @param fn Function to be evaluated in browser context
      * @param args Arguments to pass to `fn`
      */
-    evaluate<T extends EvaluateFn<A>>(
+    evaluate<TS extends SerializableOrJSHandle[], T extends EvaluateFn<TS>>(
       pageFunction: T,
-      ...args: SerializableOrJSHandle[],
-    ): Promise<EvaluateFnReturnType<T>>;
+      ...args: TS,
+    ): Promise<EvaluateFnReturnType<TS, T>>;
     /**
      * The only difference between `evaluate` and `evaluateHandle` is that `evaluateHandle` returns in-page object (`JSHandle`).
      * If the function, passed to the `evaluateHandle`, returns a `Promise`, then `evaluateHandle` would wait for the
@@ -242,9 +98,9 @@ export interface JSEvalable<A = any> {
      * @param fn Function to be evaluated in browser context
      * @param args Arguments to pass to `fn`
      */
-    evaluateHandle(
-      pageFunction: string | ((arg1: A, ...args: any[]) => any),
-      ...args: SerializableOrJSHandle[],
+    evaluateHandle<TS extends SerializableOrJSHandle[]>(
+      pageFunction: string | ((arg1: A, ...args: TS) => any),
+      ...args: TS,
     ): Promise<JSHandle>;
 }
 
@@ -519,8 +375,8 @@ export interface EmulateOptions {
   userAgent?: string;
 }
 
-export type EvaluateFn<T = any> = string | ((arg1: T, ...args: any[]) => any);
-export type EvaluateFnReturnType<T extends EvaluateFn> = T extends ((...args: any[]) => infer R) ? R : unknown;
+export type EvaluateFn<TS extends SerializableOrJSHandle[]> = string | ((...args: TS) => any);
+export type EvaluateFnReturnType<TS extends SerializableOrJSHandle[], T extends EvaluateFn<TS>> = T extends ((...args: TS) => infer R) ? R : any;
 
 export type LoadEvent =
   | "load"
@@ -1238,19 +1094,19 @@ export interface FrameBase extends Evalable, JSEvalable {
   /**
    * Shortcut for waitForFunction.
    */
-  waitFor(
-    selector: EvaluateFn,
+  waitFor<TS extends SerializableOrJSHandle[]>(
+    selector: EvaluateFn<TS>,
     options?: WaitForSelectorOptions,
-    ...args: SerializableOrJSHandle[]
+    ...args: TS
   ): Promise<JSHandle>;
 
   /**
    * Allows waiting for various conditions.
    */
-  waitForFunction(
-    fn: EvaluateFn,
+  waitForFunction<TS extends SerializableOrJSHandle[]>(
+    fn: EvaluateFn<TS>,
     options?: PageFnOptions,
-    ...args: SerializableOrJSHandle[]
+    ...args: TS,
   ): Promise<JSHandle>;
 
   /**
@@ -1602,9 +1458,9 @@ export interface Page extends EventEmitter, FrameBase {
    * @param fn The function to be evaluated in browser context.
    * @param args The arguments to pass to the `fn`.
    */
-  evaluateOnNewDocument(
-    fn: EvaluateFn,
-    ...args: SerializableOrJSHandle[]
+  evaluateOnNewDocument<TS extends SerializableOrJSHandle[]>(
+    fn: EvaluateFn<TS>,
+    ...args: TS,
   ): Promise<void>;
 
   /**
