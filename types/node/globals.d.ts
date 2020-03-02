@@ -606,6 +606,7 @@ declare namespace NodeJS {
         heapTotal: number;
         heapUsed: number;
         external: number;
+        arrayBuffers: number;
     }
 
     interface CpuUsage {

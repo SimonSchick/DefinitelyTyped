@@ -138,6 +138,11 @@ declare module "readline" {
         crlfDelay?: number;
         removeHistoryDuplicates?: boolean;
         escapeCodeTimeout?: number;
+        /**
+         * The number of spaces a tab is equal to (minimum 1).
+         * @default 8
+         */
+        tabSize?: number;
     }
 
     function createInterface(input: NodeJS.ReadableStream, output?: NodeJS.WritableStream, completer?: Completer | AsyncCompleter, terminal?: boolean): Interface;
