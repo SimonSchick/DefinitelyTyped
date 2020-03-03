@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 
-assert(1 + 1 - 2 === 0, "The universe isn't how it should.");
+assert.ok(1 + 1 - 2 === 0, "The universe isn't how it should.");
 
 assert.deepEqual({ x: { y: 3 } }, { x: { y: 3 } }, "DEEP WENT DERP");
 
