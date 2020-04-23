@@ -1,10 +1,6 @@
-import * as fs from "fs";
 import * as url from "url";
-import * as util from "util";
 import * as http from "http";
 import * as https from "https";
-import * as console2 from "console";
-import * as timers from "timers";
 import * as inspector from "inspector";
 import * as trace_events from "trace_events";
 
@@ -92,63 +88,6 @@ import * as trace_events from "trace_events";
     }
 }
 
-/////////////////////////////////////////////////////
-/// Timers tests : https://nodejs.org/api/timers.html
-/////////////////////////////////////////////////////
-
-{
-    {
-        const immediate = timers
-            .setImmediate(() => {
-                console.log('immediate');
-            })
-            .unref()
-            .ref();
-        const b: boolean = immediate.hasRef();
-        timers.clearImmediate(immediate);
-    }
-    {
-        const timeout = timers
-            .setInterval(() => {
-                console.log('interval');
-            }, 20)
-            .unref()
-            .ref()
-            .refresh();
-        const b: boolean = timeout.hasRef();
-        timers.clearInterval(timeout);
-    }
-    {
-        const timeout = timers
-            .setTimeout(() => {
-                console.log('timeout');
-            }, 20)
-            .unref()
-            .ref()
-            .refresh();
-        const b: boolean = timeout.hasRef();
-        timers.clearTimeout(timeout);
-    }
-    async function testPromisify(doSomething: {
-        (foo: any, onSuccessCallback: (result: string) => void, onErrorCallback: (reason: any) => void): void;
-        [util.promisify.custom](foo: any): Promise<string>;
-    }) {
-        const setTimeout = util.promisify(timers.setTimeout);
-        let v: void = await setTimeout(100); // tslint:disable-line no-void-expression void-return
-        let s: string = await setTimeout(100, "");
-
-        const setImmediate = util.promisify(timers.setImmediate);
-        v = await setImmediate(); // tslint:disable-line no-void-expression
-        s = await setImmediate("");
-
-        // $ExpectType (foo: any) => Promise<string>
-        const doSomethingPromise = util.promisify(doSomething);
-
-        // $ExpectType string
-        s = await doSomethingPromise('foo');
-    }
-}
-
 /////////////////////////////////////////////////////////
 /// Errors Tests : https://nodejs.org/api/errors.html ///
 /////////////////////////////////////////////////////////
@@ -180,90 +119,6 @@ import * as trace_events from "trace_events";
         const isEval: boolean = frame.isEval();
         const isNative: boolean = frame.isNative();
         const isConstr: boolean = frame.isConstructor();
-    }
-}
-
-///////////////////////////////////////////////////////////
-/// Console Tests : https://nodejs.org/api/console.html ///
-///////////////////////////////////////////////////////////
-
-{
-    {
-        let _c: Console = console;
-        _c = console2;
-    }
-    {
-        const writeStream = fs.createWriteStream('./index.d.ts');
-        let consoleInstance: Console = new console.Console(writeStream);
-
-        consoleInstance = new console.Console(writeStream, writeStream);
-        consoleInstance = new console.Console(writeStream, writeStream, true);
-        consoleInstance = new console.Console({
-            stdout: writeStream,
-            stderr: writeStream,
-            colorMode: 'auto',
-            ignoreErrors: true
-        });
-        consoleInstance = new console.Console({
-            stdout: writeStream,
-            colorMode: false
-        });
-        consoleInstance = new console.Console({
-            stdout: writeStream
-        });
-    }
-    {
-        console.assert('value');
-        console.assert('value', 'message');
-        console.assert('value', 'message', 'foo', 'bar');
-        console.clear();
-        console.count();
-        console.count('label');
-        console.countReset();
-        console.countReset('label');
-        console.debug();
-        console.debug('message');
-        console.debug('message', 'foo', 'bar');
-        console.dir('obj');
-        console.dir('obj', { depth: 1 });
-        console.error();
-        console.error('message');
-        console.error('message', 'foo', 'bar');
-        console.group();
-        console.group('label');
-        console.group('label1', 'label2');
-        console.groupCollapsed();
-        console.groupEnd();
-        console.info();
-        console.info('message');
-        console.info('message', 'foo', 'bar');
-        console.log();
-        console.log('message');
-        console.log('message', 'foo', 'bar');
-        console.table({ foo: 'bar' });
-        console.table([{ foo: 'bar' }]);
-        console.table([{ foo: 'bar' }], ['foo']);
-        console.time();
-        console.time('label');
-        console.timeEnd();
-        console.timeEnd('label');
-        console.timeLog();
-        console.timeLog('label');
-        console.timeLog('label', 'foo', 'bar');
-        console.trace();
-        console.trace('message');
-        console.trace('message', 'foo', 'bar');
-        console.warn();
-        console.warn('message');
-        console.warn('message', 'foo', 'bar');
-
-        // --- Inspector mode only ---
-        console.profile();
-        console.profile('label');
-        console.profileEnd();
-        console.profileEnd('label');
-        console.timeStamp();
-        console.timeStamp('label');
     }
 }
 

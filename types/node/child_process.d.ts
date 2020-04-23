@@ -3,6 +3,7 @@ declare module "child_process" {
     import * as events from "events";
     import * as net from "net";
     import { Writable, Readable, Stream, Pipe } from "stream";
+    import { Signals } from 'process';
 
     type Serializable = string | object | number | boolean;
     type SendHandle = net.Socket | net.Server;
@@ -22,7 +23,7 @@ declare module "child_process" {
         readonly killed: boolean;
         readonly pid: number;
         readonly connected: boolean;
-        kill(signal?: NodeJS.Signals | number): boolean;
+        kill(signal?: Signals | number): boolean;
         send(message: Serializable, callback?: (error: Error | null) => void): boolean;
         send(message: Serializable, sendHandle?: SendHandle, callback?: (error: Error | null) => void): boolean;
         send(message: Serializable, sendHandle?: SendHandle, options?: MessageOptions, callback?: (error: Error | null) => void): boolean;
@@ -40,45 +41,45 @@ declare module "child_process" {
          */
 
         addListener(event: string, listener: (...args: any[]) => void): this;
-        addListener(event: "close", listener: (code: number, signal: NodeJS.Signals) => void): this;
+        addListener(event: "close", listener: (code: number, signal: Signals) => void): this;
         addListener(event: "disconnect", listener: () => void): this;
         addListener(event: "error", listener: (err: Error) => void): this;
-        addListener(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
+        addListener(event: "exit", listener: (code: number | null, signal: Signals | null) => void): this;
         addListener(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
 
         emit(event: string | symbol, ...args: any[]): boolean;
-        emit(event: "close", code: number, signal: NodeJS.Signals): boolean;
+        emit(event: "close", code: number, signal: Signals): boolean;
         emit(event: "disconnect"): boolean;
         emit(event: "error", err: Error): boolean;
-        emit(event: "exit", code: number | null, signal: NodeJS.Signals | null): boolean;
+        emit(event: "exit", code: number | null, signal: Signals | null): boolean;
         emit(event: "message", message: Serializable, sendHandle: SendHandle): boolean;
 
         on(event: string, listener: (...args: any[]) => void): this;
-        on(event: "close", listener: (code: number, signal: NodeJS.Signals) => void): this;
+        on(event: "close", listener: (code: number, signal: Signals) => void): this;
         on(event: "disconnect", listener: () => void): this;
         on(event: "error", listener: (err: Error) => void): this;
-        on(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
+        on(event: "exit", listener: (code: number | null, signal: Signals | null) => void): this;
         on(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
 
         once(event: string, listener: (...args: any[]) => void): this;
-        once(event: "close", listener: (code: number, signal: NodeJS.Signals) => void): this;
+        once(event: "close", listener: (code: number, signal: Signals) => void): this;
         once(event: "disconnect", listener: () => void): this;
         once(event: "error", listener: (err: Error) => void): this;
-        once(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
+        once(event: "exit", listener: (code: number | null, signal: Signals | null) => void): this;
         once(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
 
         prependListener(event: string, listener: (...args: any[]) => void): this;
-        prependListener(event: "close", listener: (code: number, signal: NodeJS.Signals) => void): this;
+        prependListener(event: "close", listener: (code: number, signal: Signals) => void): this;
         prependListener(event: "disconnect", listener: () => void): this;
         prependListener(event: "error", listener: (err: Error) => void): this;
-        prependListener(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
+        prependListener(event: "exit", listener: (code: number | null, signal: Signals | null) => void): this;
         prependListener(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
 
         prependOnceListener(event: string, listener: (...args: any[]) => void): this;
-        prependOnceListener(event: "close", listener: (code: number, signal: NodeJS.Signals) => void): this;
+        prependOnceListener(event: "close", listener: (code: number, signal: Signals) => void): this;
         prependOnceListener(event: "disconnect", listener: () => void): this;
         prependOnceListener(event: "error", listener: (err: Error) => void): this;
-        prependOnceListener(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
+        prependOnceListener(event: "exit", listener: (code: number | null, signal: Signals | null) => void): this;
         prependOnceListener(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
     }
 
@@ -261,7 +262,7 @@ declare module "child_process" {
     interface ExecOptions extends CommonOptions {
         shell?: string;
         maxBuffer?: number;
-        killSignal?: NodeJS.Signals | number;
+        killSignal?: Signals | number;
     }
 
     interface ExecOptionsWithStringEncoding extends ExecOptions {
@@ -276,7 +277,7 @@ declare module "child_process" {
         cmd?: string;
         killed?: boolean;
         code?: number;
-        signal?: NodeJS.Signals;
+        signal?: Signals;
     }
 
     // no `options` definitely means stdout/stderr are `string`.
@@ -321,7 +322,7 @@ declare module "child_process" {
 
     interface ExecFileOptions extends CommonOptions {
         maxBuffer?: number;
-        killSignal?: NodeJS.Signals | number;
+        killSignal?: Signals | number;
         windowsVerbatimArguments?: boolean;
         shell?: boolean | string;
     }
@@ -430,7 +431,7 @@ declare module "child_process" {
 
     interface SpawnSyncOptions extends CommonSpawnOptions {
         input?: string | NodeJS.ArrayBufferView;
-        killSignal?: NodeJS.Signals | number;
+        killSignal?: Signals | number;
         maxBuffer?: number;
         encoding?: BufferEncoding;
     }
@@ -446,7 +447,7 @@ declare module "child_process" {
         stdout: T;
         stderr: T;
         status: number | null;
-        signal: NodeJS.Signals | null;
+        signal: Signals | null;
         error?: Error;
     }
     function spawnSync(command: string): SpawnSyncReturns<Buffer>;
@@ -461,7 +462,7 @@ declare module "child_process" {
         input?: string | Uint8Array;
         stdio?: StdioOptions;
         shell?: string;
-        killSignal?: NodeJS.Signals | number;
+        killSignal?: Signals | number;
         maxBuffer?: number;
         encoding?: BufferEncoding;
     }
@@ -479,7 +480,7 @@ declare module "child_process" {
     interface ExecFileSyncOptions extends CommonOptions {
         input?: string | NodeJS.ArrayBufferView;
         stdio?: StdioOptions;
-        killSignal?: NodeJS.Signals | number;
+        killSignal?: Signals | number;
         maxBuffer?: number;
         encoding?: BufferEncoding;
         shell?: boolean | string;

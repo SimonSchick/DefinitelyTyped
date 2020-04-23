@@ -1,4 +1,5 @@
 declare module "os" {
+    import { Signals, Platform } from 'process';
     interface CpuInfo {
         model: string;
         speed: number;
@@ -52,7 +53,7 @@ declare module "os" {
     function userInfo(options?: { encoding: BufferEncoding }): UserInfo<string>;
 
     type SignalConstants = {
-        [key in NodeJS.Signals]: number;
+        [key in Signals]: number;
     };
 
     namespace constants {
@@ -217,7 +218,7 @@ declare module "os" {
      * https://en.wikipedia.org/wiki/Uname#Examples for more information.
      */
     function version(): string;
-    function platform(): NodeJS.Platform;
+    function platform(): Platform;
     function tmpdir(): string;
     const EOL: string;
     function endianness(): "BE" | "LE";

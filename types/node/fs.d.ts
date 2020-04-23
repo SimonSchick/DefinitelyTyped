@@ -57,6 +57,24 @@ declare module "fs" {
     export class Stats {
     }
 
+    export interface BigIntStats extends StatsBase<bigint> {
+    }
+
+    export class BigIntStats {
+        atimeNs: bigint;
+        mtimeNs: bigint;
+        ctimeNs: bigint;
+        birthtimeNs: bigint;
+    }
+
+    export interface BigIntOptions {
+        bigint: true;
+    }
+
+    export interface StatOptions {
+        bigint: boolean;
+    }
+
     export class Dirent {
         isFile(): boolean;
         isDirectory(): boolean;
@@ -504,6 +522,8 @@ declare module "fs" {
      * @param path A path to a file. If a URL is provided, it must use the `file:` protocol.
      */
     export function stat(path: PathLike, callback: (err: NodeJS.ErrnoException | null, stats: Stats) => void): void;
+    export function stat(path: PathLike, options: BigIntOptions, callback: (err: NodeJS.ErrnoException | null, stats: BigIntStats) => void): void;
+    export function stat(path: PathLike, options: StatOptions, callback: (err: NodeJS.ErrnoException | null, stats: Stats | BigIntStats) => void): void;
 
     // NOTE: This namespace provides design-time support for util.promisify. Exported members do not exist at runtime.
     export namespace stat {
@@ -512,6 +532,8 @@ declare module "fs" {
          * @param path A path to a file. If a URL is provided, it must use the `file:` protocol.
          */
         function __promisify__(path: PathLike): Promise<Stats>;
+        function __promisify__(path: PathLike, options: BigIntOptions): Promise<BigIntStats>;
+        function __promisify__(path: PathLike, options: StatOptions): Promise<Stats | BigIntStats>;
     }
 
     /**
@@ -519,6 +541,8 @@ declare module "fs" {
      * @param path A path to a file. If a URL is provided, it must use the `file:` protocol.
      */
     export function statSync(path: PathLike): Stats;
+    export function statSync(path: PathLike, options: BigIntOptions): BigIntStats;
+    export function statSync(path: PathLike, options: StatOptions): Stats | BigIntStats;
 
     /**
      * Asynchronous fstat(2) - Get file status.

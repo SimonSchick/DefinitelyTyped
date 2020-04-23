@@ -44,12 +44,12 @@
 //                 Surasak Chaisurin <https://github.com/Ryan-Willpower>
 //                 Piotr Błażejewicz <https://github.com/peterblazejewicz>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 3.4
 
 // NOTE: These definitions support NodeJS and TypeScript 3.5.
 
 // NOTE: TypeScript version-specific augmentations can be found in the following paths:
 //          - ~/base.d.ts         - Shared definitions common to all TypeScript versions
-//          - ~/index.d.ts        - Definitions specific to TypeScript 2.8
 //          - ~/ts3.5/index.d.ts  - Definitions specific to TypeScript 3.5
 
 // NOTE: Augmentations for TypeScript 3.5 and later should use individual files for overrides
@@ -61,28 +61,3 @@
 
 // We can't include assert.d.ts in base.d.ts, as it'll cause duplication errors in +ts3.7
 /// <reference path="assert.d.ts" />
-
-// Forward-declarations for needed types from es2015 and later (in case users are using `--lib es5`)
-// Empty interfaces are used here which merge fine with the real declarations in the lib XXX files
-// just to ensure the names are known and node typings can be used without importing these libs.
-// if someone really needs these types the libs need to be added via --lib or in tsconfig.json
-interface AsyncIterable<T> { }
-interface IterableIterator<T> { }
-interface AsyncIterableIterator<T> {}
-interface SymbolConstructor {
-    readonly asyncIterator: symbol;
-}
-declare var Symbol: SymbolConstructor;
-// even this is just a forward declaration some properties are added otherwise
-// it would be allowed to pass anything to e.g. Buffer.from()
-interface SharedArrayBuffer {
-    readonly byteLength: number;
-    slice(begin?: number, end?: number): SharedArrayBuffer;
-}
-
-declare module "util" {
-    namespace types {
-        function isBigInt64Array(value: any): boolean;
-        function isBigUint64Array(value: any): boolean;
-    }
-}

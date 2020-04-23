@@ -20,8 +20,8 @@ rf = Module.createRequire('mod');
 rf = Module.createRequireFromPath('mod');
 rf = Module.createRequire(new URL('file:///C:/path/'));
 
-const aModule: NodeModule = new Module("s");
-const bModule: NodeModule = new Module("b", aModule);
+const aModule: Module = new Module("s");
+const bModule: Module = new Module("b", aModule);
 
 const builtIn: string[] = Module.builtinModules;
 

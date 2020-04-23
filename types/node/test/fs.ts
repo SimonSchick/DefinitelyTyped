@@ -352,3 +352,9 @@ async function testPromisify() {
     fs.readv(123, [Buffer.from('wut')], 123, (err: NodeJS.ErrnoException | null, bytesRead: number, buffers: NodeJS.ArrayBufferView[]) => {
     });
 }
+
+{
+    const bigStats: fs.BigIntStats = fs.statSync('.', { bigint: true });
+    const bigIntStat: bigint = bigStats.atimeNs;
+    const anyStats: fs.Stats | fs.BigIntStats = fs.statSync('.', { bigint: Math.random() > 0.5 });
+}

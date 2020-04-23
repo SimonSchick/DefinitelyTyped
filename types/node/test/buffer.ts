@@ -236,3 +236,15 @@ b.fill('a').fill('b');
     const target: TranscodeEncoding = 'ascii';
     transcode(Buffer.from('€'), source, target); // $ExpectType Buffer
 }
+
+{
+    const a = Buffer.alloc(1000);
+    a.writeBigInt64BE(BigInt(123));
+    a.writeBigInt64LE(BigInt(123));
+    a.writeBigUInt64BE(BigInt(123));
+    a.writeBigUInt64LE(BigInt(123));
+    let b: bigint = a.readBigInt64BE(123);
+    b = a.readBigInt64LE(123);
+    b = a.readBigUInt64LE(123);
+    b = a.readBigUInt64BE(123);
+}

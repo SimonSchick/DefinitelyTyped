@@ -26,13 +26,47 @@ declare module "module" {
             originalColumn: number;
         }
 
+        interface Require {
+            /* tslint:disable-next-line:callable-types */
+            (id: string): any;
+            resolve: RequireResolve;
+            cache: NodeJS.Dict<Module>;
+            /**
+             * @deprecated
+             */
+            extensions: RequireExtensions;
+            main: Module | undefined;
+        }
+
+        interface RequireResolve {
+            (id: string, options?: { paths?: string[]; }): string;
+            paths(request: string): string[] | null;
+        }
+
+        interface RequireExtensions extends NodeJS.Dict<(m: Module, filename: string) => any> {
+            '.js': (m: Module, filename: string) => any;
+            '.json': (m: Module, filename: string) => any;
+            '.node': (m: Module, filename: string) => any;
+        }
+
+        interface Module {
+            exports: any;
+            require: Require;
+            id: string;
+            filename: string;
+            loaded: boolean;
+            parent: Module | null;
+            children: Module[];
+            paths: string[];
+        }
+
         class SourceMap {
             readonly payload: SourceMapPayload;
             constructor(payload: SourceMapPayload);
             findEntry(line: number, column: number): SourceMapping;
         }
     }
-    interface Module extends NodeModule {}
+    interface Module extends Module.Module {}
     class Module {
         static runMain(): void;
         static wrap(code: string): string;
@@ -40,13 +74,30 @@ declare module "module" {
         /**
          * @deprecated Deprecated since: v12.2.0. Please use createRequire() instead.
          */
-        static createRequireFromPath(path: string): NodeRequire;
-        static createRequire(path: string | URL): NodeRequire;
+        static createRequireFromPath(path: string): Module.Require;
+        static createRequire(path: string | URL): Module.Require;
         static builtinModules: string[];
 
         static Module: typeof Module;
 
         constructor(id: string, parent?: Module);
     }
+
+    global {
+        namespace NodeJS {
+            interface NodeRequire extends Module.Require {}
+            interface RequireResolve extends Module.RequireResolve {}
+            interface NodeModule extends Module.Module {}
+        }
+        var require: Module.Require;
+        var module: Module.Module;
+
+        // Same as module.exports
+        var exports: any;
+
+        var __filename: string;
+        var __dirname: string;
+    }
+
     export = Module;
 }

@@ -1,16 +1,23 @@
 declare module "domain" {
+    import { Timer } from 'timers';
     import { EventEmitter } from "events";
 
-    class Domain extends EventEmitter implements NodeJS.Domain {
+    /**
+     * @deprecated
+     */
+    class Domain extends EventEmitter {
         run<T>(fn: (...args: any[]) => T, ...args: any[]): T;
-        add(emitter: EventEmitter | NodeJS.Timer): void;
-        remove(emitter: EventEmitter | NodeJS.Timer): void;
+        add(emitter: EventEmitter | Timer): void;
+        remove(emitter: EventEmitter | Timer): void;
         bind<T extends Function>(cb: T): T;
         intercept<T extends Function>(cb: T): T;
-        members: Array<EventEmitter | NodeJS.Timer>;
+        members: Array<EventEmitter | Timer>;
         enter(): void;
         exit(): void;
     }
 
+    /**
+     * @deprecated
+     */
     function create(): Domain;
 }

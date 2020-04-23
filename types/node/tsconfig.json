@@ -6,6 +6,7 @@
         "test/async_hooks.ts",
         "test/buffer.ts",
         "test/child_process.ts",
+        "test/console.ts",
         "test/constants.ts",
         "test/cluster.ts",
         "test/crypto.ts",
@@ -27,6 +28,7 @@
         "test/repl.ts",
         "test/stream.ts",
         "test/string_decoder.ts",
+        "test/timers.ts",
         "test/tls.ts",
         "test/tty.ts",
         "test/util.ts",
@@ -40,7 +42,6 @@
         "module": "commonjs",
         "target": "es6",
         "lib": [
-            "es2018",
             "dom"
         ],
         "noImplicitAny": true,

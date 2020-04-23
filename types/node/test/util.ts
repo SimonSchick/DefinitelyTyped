@@ -188,3 +188,20 @@ import { readFile } from 'fs';
         const boxed: number = maybeBoxed2;
     }
 }
+
+{
+    const value: BigInt64Array | BigUint64Array | number = [] as any;
+    if (util.types.isBigInt64Array(value)) {
+        // $ExpectType BigInt64Array
+        const b = value;
+    } else if (util.types.isBigUint64Array(value)) {
+        // $ExpectType BigUint64Array
+        const b = value;
+    } else {
+        // $ExpectType number
+        const b = value;
+    }
+
+    const arg1UnknownError: (arg: string) => Promise<number> = util.promisify((arg: string, cb: (err: unknown, result: number) => void): void => { });
+    const arg1AnyError: (arg: string) => Promise<number> = util.promisify((arg: string, cb: (err: any, result: number) => void): void => { });
+}
