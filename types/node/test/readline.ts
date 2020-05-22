@@ -9,7 +9,9 @@ const rl: readline.ReadLine = readline.createInterface(new stream.Readable());
         input: new fs.ReadStream()
     };
     const input: NodeJS.ReadableStream = new stream.Readable();
-    const output: NodeJS.WritableStream = new stream.Writable();
+    const output: NodeJS.WritableStream = new stream.Writable({
+        defaultEncoding: 'ascii',
+    });
     const completer: readline.Completer = str => [['asd'], 'asd'];
     const terminal = false;
 
