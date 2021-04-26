@@ -45,6 +45,7 @@ declare module 'child_process' {
          * 3. error
          * 4. exit
          * 5. message
+         * 6. spawn
          */
 
         addListener(event: string, listener: (...args: any[]) => void): this;
@@ -53,6 +54,7 @@ declare module 'child_process' {
         addListener(event: "error", listener: (err: Error) => void): this;
         addListener(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
         addListener(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
+        addListener(event: "spawn", listener: () => void): this;
 
         emit(event: string | symbol, ...args: any[]): boolean;
         emit(event: "close", code: number | null, signal: NodeJS.Signals | null): boolean;
@@ -60,6 +62,7 @@ declare module 'child_process' {
         emit(event: "error", err: Error): boolean;
         emit(event: "exit", code: number | null, signal: NodeJS.Signals | null): boolean;
         emit(event: "message", message: Serializable, sendHandle: SendHandle): boolean;
+        emit(event: "spawn", listener: () => void): boolean;
 
         on(event: string, listener: (...args: any[]) => void): this;
         on(event: "close", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
@@ -67,6 +70,7 @@ declare module 'child_process' {
         on(event: "error", listener: (err: Error) => void): this;
         on(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
         on(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
+        on(event: "spawn", listener: () => void): this;
 
         once(event: string, listener: (...args: any[]) => void): this;
         once(event: "close", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
@@ -74,6 +78,7 @@ declare module 'child_process' {
         once(event: "error", listener: (err: Error) => void): this;
         once(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
         once(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
+        once(event: "spawn", listener: () => void): this;
 
         prependListener(event: string, listener: (...args: any[]) => void): this;
         prependListener(event: "close", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
@@ -81,6 +86,7 @@ declare module 'child_process' {
         prependListener(event: "error", listener: (err: Error) => void): this;
         prependListener(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
         prependListener(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
+        prependListener(event: "spawn", listener: () => void): this;
 
         prependOnceListener(event: string, listener: (...args: any[]) => void): this;
         prependOnceListener(event: "close", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
@@ -88,6 +94,7 @@ declare module 'child_process' {
         prependOnceListener(event: "error", listener: (err: Error) => void): this;
         prependOnceListener(event: "exit", listener: (code: number | null, signal: NodeJS.Signals | null) => void): this;
         prependOnceListener(event: "message", listener: (message: Serializable, sendHandle: SendHandle) => void): this;
+        prependOnceListener(event: "spawn", listener: () => void): this;
     }
 
     // return this object when stdio option is undefined or not specified

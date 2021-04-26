@@ -8,6 +8,7 @@ declare module 'worker_threads' {
     import { Readable, Writable } from 'node:stream';
     import { URL } from 'node:url';
     import { FileHandle } from 'node:fs/promises';
+    import { EventLoopUtilityFunction } from 'node:perf_hooks';
 
     const isMainThread: boolean;
     const parentPort: null | MessagePort;
@@ -19,6 +20,10 @@ declare module 'worker_threads' {
     class MessageChannel {
         readonly port1: MessagePort;
         readonly port2: MessagePort;
+    }
+
+    interface WorkerPerformance {
+        eventLoopUtilitzation: EventLoopUtilityFunction;
     }
 
     type TransferListItem = ArrayBuffer | MessagePort | FileHandle;
@@ -123,6 +128,7 @@ declare module 'worker_threads' {
         readonly stderr: Readable;
         readonly threadId: number;
         readonly resourceLimits?: ResourceLimits;
+        readonly performance: WorkerPerformance;
 
         /**
          * @param filename  The path to the Worker’s main script or module.
