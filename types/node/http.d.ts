@@ -81,6 +81,7 @@ declare module 'http' {
     }
 
     interface ClientRequestArgs {
+        abort?: AbortSignal;
         protocol?: string | null;
         host?: string | null;
         hostname?: string | null;

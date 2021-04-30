@@ -1,6 +1,7 @@
 import * as http from 'node:http';
 import * as url from 'node:url';
 import * as net from 'node:net';
+import { abort } from 'node:process';
 
 // http Server
 {
@@ -202,10 +203,12 @@ import * as net from 'node:net';
 // http request options
 {
     const requestOpts: http.RequestOptions = {
+        abort: new AbortSignal(),
         timeout: 30000
     };
 
     const clientArgs: http.ClientRequestArgs = {
+        abort: new AbortSignal(),
         timeout: 30000
     };
 }

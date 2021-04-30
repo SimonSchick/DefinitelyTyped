@@ -3,6 +3,26 @@ declare module 'node:path' {
     export = path;
 }
 
+declare module 'path/posix' {
+    import path = require('path');
+    export = path;
+}
+
+declare module 'node:path/posix' {
+    import path = require('path');
+    export = path;
+}
+
+declare module 'path/win32' {
+    import path = require('path');
+    export = path;
+}
+
+declare module 'node:path/win32' {
+    import path = require('path');
+    export = path;
+}
+
 declare module 'path' {
     namespace path {
         /**

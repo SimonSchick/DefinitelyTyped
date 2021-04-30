@@ -114,3 +114,7 @@ import EventEmitter = require('node:events');
     // Emits: (node:56338) [MY_WARNING] Warning: Something happened!
     // This is some additional information
 }
+
+const hrtimeBigint: bigint = process.hrtime.bigint();
+
+process.allowedNodeEnvironmentFlags.has('asdf');
