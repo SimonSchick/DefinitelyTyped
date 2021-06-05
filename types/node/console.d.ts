@@ -131,3 +131,8 @@ declare module 'console' {
 
     export = console;
 }
+
+declare module 'node:console' {
+    import * as console from 'process';
+    export = console;
+}

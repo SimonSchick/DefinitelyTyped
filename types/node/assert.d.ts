@@ -122,3 +122,8 @@ declare module 'assert' {
 
     export = assert;
 }
+
+declare module 'node:assert' {
+    import * as assert from 'process';
+    export = assert;
+}

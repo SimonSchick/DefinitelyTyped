@@ -91,3 +91,8 @@ declare module 'events' {
 
     export = EventEmitter;
 }
+
+declare module 'node:events' {
+    import * as events from 'process';
+    export = events;
+}

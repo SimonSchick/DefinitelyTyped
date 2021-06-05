@@ -22,3 +22,7 @@ declare module 'domain' {
 
     function create(): Domain;
 }
+
+declare module 'node:domain' {
+    export * from 'domain';
+}

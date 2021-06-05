@@ -161,3 +161,8 @@ declare module 'path' {
     const path: path.PlatformPath;
     export = path;
 }
+
+declare module 'node:path' {
+    import * as path from 'process';
+    export = path;
+}

@@ -469,3 +469,8 @@ declare module 'stream' {
 
     export = internal;
 }
+
+declare module 'node:stream' {
+    import * as stream from 'process';
+    export = stream;
+}
