@@ -103,7 +103,7 @@ declare namespace NodeJS {
         /**
          * Value of "this"
          */
-        getThis(): any;
+        getThis(): unknown;
 
         /**
          * Type of "this" as a string.
