@@ -1,10 +1,26 @@
 declare module 'console' {
     import { InspectOptions } from 'util';
 
+    namespace console {
+        interface ConsoleConstructorOptions {
+            stdout: NodeJS.WritableStream;
+            stderr?: NodeJS.WritableStream;
+            ignoreErrors?: boolean;
+            colorMode?: boolean | 'auto';
+            inspectOptions?: InspectOptions;
+        }
+
+        interface ConsoleConstructor {
+            prototype: Console;
+            new(stdout: NodeJS.WritableStream, stderr?: NodeJS.WritableStream, ignoreErrors?: boolean): Console;
+            new(options: ConsoleConstructorOptions): Console;
+        }
+    }
+
     global {
         // This needs to be global to avoid TS2403 in case lib.dom.d.ts is present in the same build
         interface Console {
-            Console: NodeJS.ConsoleConstructor;
+            Console: console.ConsoleConstructor;
             /**
              * A simple assertion test that verifies whether `value` is truthy.
              * If it is not, an `AssertionError` is thrown.
@@ -107,24 +123,9 @@ declare module 'console' {
         }
 
         var console: Console;
-
-        namespace NodeJS {
-            interface ConsoleConstructorOptions {
-                stdout: WritableStream;
-                stderr?: WritableStream;
-                ignoreErrors?: boolean;
-                colorMode?: boolean | 'auto';
-                inspectOptions?: InspectOptions;
-            }
-
-            interface ConsoleConstructor {
-                prototype: Console;
-                new(stdout: WritableStream, stderr?: WritableStream, ignoreErrors?: boolean): Console;
-                new(options: ConsoleConstructorOptions): Console;
-            }
-        }
     }
 
+    const console: Console;
     export = console;
 }
 
