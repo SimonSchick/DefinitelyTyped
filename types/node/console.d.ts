@@ -122,10 +122,6 @@ declare module 'console' {
                 new(stdout: WritableStream, stderr?: WritableStream, ignoreErrors?: boolean): Console;
                 new(options: ConsoleConstructorOptions): Console;
             }
-
-            interface Global {
-                console: typeof console;
-            }
         }
     }
 

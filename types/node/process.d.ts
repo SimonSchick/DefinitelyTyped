@@ -452,10 +452,6 @@ declare module 'process' {
                 listeners(event: "removeListener"): RemoveListenerListener[];
                 listeners(event: "multipleResolves"): MultipleResolveListener[];
             }
-
-            interface Global {
-                process: Process;
-            }
         }
     }
 
