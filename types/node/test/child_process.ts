@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import assert = require('assert');
 import { promisify } from 'util';
 import { Writable, Readable, Pipe } from 'stream';
+import { URL } from 'url';
 
 {
     childProcess.exec("echo test");
@@ -20,6 +21,7 @@ import { Writable, Readable, Pipe } from 'stream';
     childProcess.spawnSync("echo test", {input: new DataView(new ArrayBuffer(1))});
     childProcess.spawnSync("echo test", { encoding: 'utf-8' });
     childProcess.spawnSync("echo test", { encoding: 'buffer' });
+    childProcess.spawnSync("echo test", { cwd: new URL('file://aaaaaaaa')});
 }
 
 {
